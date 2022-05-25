@@ -8,7 +8,7 @@ export class Miner extends AcGameObject {
         this.x = x;
         this.y = y;
         this.radius = 0.02;
-        this.fraction = 1.5;
+        this.money = 1;
     }
 
     start() {

@@ -1,5 +1,4 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
-// import { Hook } from "../hook/zbase";
 import { Hook } from "/static/js/src/playground/hook/zbase.js";
 
 export class Player extends AcGameObject {

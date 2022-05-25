@@ -12,14 +12,17 @@ export class Hook extends AcGameObject {
         this.y = null;
         this.radius = 0.012;
         this.angle = Math.PI / 2;
-        this.direction_flag = 1;  //  1: left  2: right  3: stop-left  4: stop-right
-        this.direction = null;
+
+        // 1：向左摆动，2：向右摆动，3：发射钩子，4：收回钩子
+        this.direction_flag = 1;
+        this.direction_tmp = 0;  // 记录发射钩子前的摆动方向
+        this.direction = Math.PI / 2 * (this.timedelta / 1000);
         this.base_tile_length = 0.1;
         this.max_tile_length = 0.6;
         this.tile_length = this.base_tile_length;
         this.moved = 0;
         this.catched = false;  // 是否抓到东西
-        this.fraction = 0;
+        this.money = 0;
 
         this.eps = 0.01;
     }
@@ -29,14 +32,12 @@ export class Hook extends AcGameObject {
     }
 
     tick() {
-        if (this.catched) {
+        if (this.direction_flag > 2) {
             return false;
         }
 
-        if (this.direction_flag <= 2) {
-            this.direction_flag += 2;
-        }
-
+        this.direction_tmp = this.direction_flag;
+        this.direction_flag = 3;
         this.moved = 0.008;
     }
 
@@ -54,17 +55,19 @@ export class Hook extends AcGameObject {
             let miner = this.playground.miners[i];
             if (this.is_collision(miner)) {
                 this.catch_miner(miner);
+                this.catched = true;
+                this.direction_flag = 4;
                 return miner;
             }
         }
     }
 
-    add_fraction() {
+    add_money() {
         let miner = this.update_catch();
         if (miner) {
-            this.fraction += miner.fraction;
+            this.money += miner.money;
             miner.destroy();
-            console.log("fraction:", this.fraction);
+            console.log("money:", this.money);
         }
     }
 
@@ -88,45 +91,47 @@ export class Hook extends AcGameObject {
     }
 
     update_tile_length() {
-        // 控制绳子长短
-        if (this.max_tile_length - this.tile_length < this.eps) {
-            this.moved = -this.moved;
-            // 标记为抓到东西
-            this.catched = true;
-        } else if (this.catched && this.tile_length - this.base_tile_length < this.eps) {
-            this.moved = 0;
-            // 标记为没抓到东西
-            this.catched = false;
-            // 更新分数
-            this.add_fraction();
-            // 钩子开始转动
-            if (this.direction_flag >= 3) {
-                this.direction_flag -= 2;
+        if (this.direction_flag === 3) {
+            this.tile_length += this.moved;
+        } else if (this.direction_flag === 4) {
+            this.tile_length -= this.moved;
+        }
+
+        // 抓到金矿或者钩子达到最大长度就收回
+        if (this.catched || Math.abs(this.max_tile_length - this.tile_length) < this.eps) {
+            this.direction_flag = 4;
+        }
+        // 收回状态并且钩子收到最短就重新开始转动
+        if (this.direction_flag === 4 && Math.abs(this.tile_length - this.base_tile_length) < this.eps) {
+            this.direction_flag = this.direction_tmp;
+            // 如果抓回了东西就计算价值
+            if (this.catched) {
+                this.add_money();
+                this.catched = false;
             }
         }
-        this.tile_length += this.moved;
     }
 
     update_angle() {
         if (this.timedelta / 1000 > 1 / 50) {
             return false;
         }
+        this.direction = Math.PI / 2 * (this.timedelta / 1000);
 
         // 控制钩子转动方向和是否转动
         if (this.direction_flag === 1) {
-            this.direction = -Math.PI / 2 * (this.timedelta / 1000);
+            this.angle -= this.direction;
         } else if (this.direction_flag === 2) {
-            this.direction = Math.PI / 2 * (this.timedelta / 1000);
-        } else if (this.direction_flag > 2) {
-            this.direction = 0;
+            this.angle += this.direction;
         }
-        this.angle += this.direction;
 
+        // 控制钩子转向
         if (this.angle < -Math.PI / 2) {
             this.direction_flag = 2;
         } else if (this.angle > Math.PI / 2) {
             this.direction_flag = 1;
         }
+
     }
 
     update_position() {
