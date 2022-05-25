@@ -1,5 +1,6 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
-import { GameBackground } from "/static/js/src/playground/game_background/zbase.js";
+import { GameBackground } from "/static/js/src/playground/game_map/game_background/zbase.js";
+// import { ScoreNumber } from "/static/js/src/playground/game_map/ScoreNumber/zbase.js";
 
 export class GameMap extends AcGameObject {
     constructor(playground) {
@@ -15,6 +16,7 @@ export class GameMap extends AcGameObject {
         this.ctx = this.$canvas[0].getContext('2d');
 
         this.game_background = new GameBackground(this.playground, this.game_background_ctx);
+        // this.score_number = new ScoreNumber(this.playground, this.game_background_ctx);
 
         this.initScreen();
     }
@@ -25,9 +27,6 @@ export class GameMap extends AcGameObject {
         this.$canvasDiv.css({ "height": this.playground.height });
         this.$canvasDiv.css({ "background-color": "lightgreed" });
         this.$canvasDiv.css({ "margin": "auto" });
-
-        this.game_background_ctx.canvas.width = this.playground.width;
-        this.game_background_ctx.canvas.height = this.playground.height;
 
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
@@ -61,8 +60,7 @@ export class GameMap extends AcGameObject {
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         if (this.game_background) this.game_background.resize();
-
-        console.log(this.game_background_ctx.canvas.height, this.ctx.canvas.height);
+        // if (this.score_number) this.score_number.resize();
     }
 
     update() {

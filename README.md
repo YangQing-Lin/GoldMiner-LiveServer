@@ -7,7 +7,8 @@
 - 实现大金块子类
 - 优化钩子操作
 - 编写游戏背景类
-![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/20220525150209.png)
+- 绘制游戏背景图片
+- 绘制图标和数字槽
 
 ### 2022-05-24
 
