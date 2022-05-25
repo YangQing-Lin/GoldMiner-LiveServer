@@ -1,0 +1,24 @@
+<head>
+    <!-- jquery的css文件 -->
+    <link rel="stylesheet" href="https://cdn.acwing.com/static/jquery-ui-dist/jquery-ui.min.css">
+    <!-- jquery的js文件 -->
+    <script src="https://cdn.acwing.com/static/jquery/js/jquery-3.3.1.min.js"></script>
+    <!-- 引用自己的css文件 -->
+    <link rel="stylesheet" href="../../static/css/game.css">
+    <link rel="icon" href="../../static/image/icon/gold_miner_icon.png">
+
+</head>
+
+<body style="margin: 0">
+    <div id="ac_game_123"></div>
+    <!-- 将引入js的类型改成按照模块引入（之后引入多个js文件的时候不容易冲突，视频在Django框架课4.创建游戏界面 开头几分钟） -->
+    <script type="module">
+        // 只载入一个AcGame，而且不会作为全局变量
+        import { AcGame } from "../../static/js/src/zbase.js";
+        $(document).ready(function () {
+            let ac_game = new AcGame("ac_game_123");
+        });
+    </script>
+</body>
+
+</html>
