@@ -38,15 +38,18 @@ export class Hook extends AcGameObject {
 
         this.direction_tmp = this.direction_flag;
         this.direction_flag = 3;
-        this.moved = 0.008;
+        this.moved = 0.009;
     }
 
     update() {
         this.update_tile_length();
         this.update_angle();
         this.update_position();
-        this.render();
         this.update_catch();
+    }
+
+    late_update() {
+        this.render();
     }
 
     // 检测是否抓到金矿
@@ -56,7 +59,6 @@ export class Hook extends AcGameObject {
             if (this.is_collision(miner)) {
                 this.catch_miner(miner);
                 this.catched = true;
-                this.direction_flag = 4;
                 return miner;
             }
         }
@@ -98,9 +100,17 @@ export class Hook extends AcGameObject {
         }
 
         // 抓到金矿或者钩子达到最大长度就收回
-        if (this.catched || Math.abs(this.max_tile_length - this.tile_length) < this.eps) {
+        if (this.direction_flag === 3 && (this.catched || Math.abs(this.max_tile_length - this.tile_length) < this.eps)) {
             this.direction_flag = 4;
+            if (this.catched) {
+                let miner = this.update_catch();
+                if (miner) {
+                    miner.is_catched = true;
+                    this.moved = this.moved * ((200 - miner.weight) / 200);
+                }
+            }
         }
+
         // 收回状态并且钩子收到最短就重新开始转动
         if (this.direction_flag === 4 && Math.abs(this.tile_length - this.base_tile_length) < this.eps) {
             this.direction_flag = this.direction_tmp;

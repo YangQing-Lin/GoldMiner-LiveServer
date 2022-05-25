@@ -1,6 +1,7 @@
 import { GameMap } from "/static/js/src/playground/game_map/zbase.js";
 import { Player } from "/static/js/src/playground/player/zbase.js";
 import { Miner } from "/static/js/src/playground/miner/zbase.js";
+import { Gold } from "/static/js/src/playground/miner/gold/zbase.js";
 
 export class AcGamePlayground {
     constructor(root) {
@@ -98,8 +99,11 @@ export class AcGamePlayground {
 
         // 绘制玩家
         this.players.push(new Player(this, this.width / 2 / this.scale, 4 / 16, 0.03, "me", "test", "https://cdn.acwing.com/media/user/profile/photo/84494_lg_29c89a778e.jpg"));
+
+        // 加入矿物
         for (let i = 1; i <= 5; i++) {
             this.miners.push(new Miner(this, i * 0.1 + 0.3, 0.6));
+            this.miners.push(new Gold(this, i * 0.15 + 0.2, 0.8));
         }
     }
 

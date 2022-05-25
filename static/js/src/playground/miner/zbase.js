@@ -9,6 +9,9 @@ export class Miner extends AcGameObject {
         this.y = y;
         this.radius = 0.02;
         this.money = 1;
+        this.color = "gray";
+        this.weight = 1;
+        this.is_catched = false;
     }
 
     start() {
@@ -16,7 +19,15 @@ export class Miner extends AcGameObject {
     }
 
     update() {
-        this.render();
+        if (!this.is_catched) {
+            this.render();
+        }
+    }
+
+    late_update() {
+        if (this.is_catched) {
+            this.render()
+        }
     }
 
     render() {
@@ -24,7 +35,7 @@ export class Miner extends AcGameObject {
 
         this.ctx.beginPath();
         this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = "gold";
+        this.ctx.fillStyle = this.color;
         this.ctx.fill();
     }
 
