@@ -9,7 +9,7 @@ export class Miner extends AcGameObject {
         this.y = y;
         this.radius = 0.02;
         this.money = 1;
-        this.color = "gray";
+        this.color = "black";
         this.weight = 1;
         this.is_catched = false;
     }

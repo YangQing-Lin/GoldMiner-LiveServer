@@ -98,7 +98,7 @@ export class AcGamePlayground {
         this.miners = [];
 
         // 绘制玩家
-        this.players.push(new Player(this, this.width / 2 / this.scale, 4 / 16, 0.03, "me", "test", "https://cdn.acwing.com/media/user/profile/photo/84494_lg_29c89a778e.jpg"));
+        this.players.push(new Player(this, this.width / 2 / this.scale, 4 / 16, 0.03, "me", "test", "/static//image/icon/head.jpg"));
 
         // 加入矿物
         for (let i = 1; i <= 5; i++) {
