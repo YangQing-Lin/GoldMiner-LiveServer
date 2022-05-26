@@ -11,12 +11,16 @@ export class Hook extends AcGameObject {
 
         this.x = null;
         this.y = null;
-        this.radius = 0.012;
+        this.radius = 0.019;
         this.angle = 0;
         this.max_angle = Math.PI * 7 / 18;
 
         // 1：向左摆动，2：向右摆动，3：发射钩子，4：收回钩子
         this.direction_flag = 1;
+        // 抓到的物品
+        // 0：空钩子，1：半大金块，2：小金块，3：大金块
+        this.caught_item = "hook";
+
         this.direction_tmp = 0;  // 记录发射钩子前的摆动方向
         this.direction = Math.PI / 2 * (this.timedelta / 1000);
         this.base_tile_length = 0.1;
@@ -25,12 +29,24 @@ export class Hook extends AcGameObject {
         this.moved = 0;
         this.catched = false;  // 是否抓到东西
         this.money = 0;
+        this.is_start = false;
 
         this.eps = 0.01;
+
+        this.timer = 0;
+
+        this.load_image();
+        this.add_POS();
     }
 
     start() {
-
+        // 给所有的图片的加载事件绑定一个变量，用于所有图片加载好后直接执行render函数
+        // 因为render可能会执行很多次（改变窗口大小），所以不能把绘制图片代码放到onload里面
+        for (let img of this.images) {
+            img.onload = function () {
+                img.is_load = true;
+            }
+        }
     }
 
     tick() {
@@ -50,8 +66,23 @@ export class Hook extends AcGameObject {
         this.update_catch();
     }
 
+    // 钩子的图片在最后绘制，这样就能显示在最上层
     late_update() {
-        this.render();
+        // 图片都加载好之后执行一次resize
+        if (!this.is_start && this.is_all_images_loaded()) {
+            this.is_start = true;
+        } else {
+            this.render();
+        }
+    }
+
+    is_all_images_loaded() {
+        for (let img of this.images) {
+            if (!img.is_load) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // 检测是否抓到金矿
@@ -154,14 +185,92 @@ export class Hook extends AcGameObject {
         this.y = this.player.y + Math.cos(this.angle) * this.tile_length;
     }
 
+    load_image() {
+        this.hook_sheet1 = new Image();
+        this.hook_sheet1.src = "/static/image/playground/hook-sheet1.png";
+
+        this.hook_sheet0 = new Image();
+        this.hook_sheet0.src = "/static/image/playground/hook-sheet0.png";
+
+        this.images = [
+            this.hook_sheet1, this.hook_sheet0,
+        ];
+    }
+
+    add_POS() {
+        this.POS = new Array();
+        // 0~3：图片坐标和长宽
+        // 4：图片旋转角度
+        // 5：引用的图片
+        // 6：价格
+        this.POS["hook"] = [
+            139, 66, 53, 36,
+            0 * Math.PI / 180,
+            this.hook_sheet1,
+            0
+        ];
+        this.POS["hook_half_huge_gold"] = [0, 0, 133, 128, 2 * Math.PI / 180, this.hook_sheet1, 250];
+        this.POS["hook_little_gold"] = [201, 113, 44, 50, 4 * Math.PI / 180, this.hook_sheet1, 30];
+        this.POS["hook_skull"] = [145, 0, 58, 66, 4 * Math.PI / 180, this.hook_sheet1, 20];
+        this.POS["hook_bone"] = [142, 112, 61, 43, 4 * Math.PI / 180, this.hook_sheet1, 7];
+        this.POS["hook_pig"] = [200, 58, 51, 55, 4 * Math.PI / 180, this.hook_sheet1, 2];
+        this.POS["hook_pig_diamond"] = [199, 0, 53, 57, -2 * Math.PI / 180, this.hook_sheet1, 502];
+
+        this.POS["hook_huge_gold"] = [0, 0, 154, 158, 4 * Math.PI / 180, this.hook_sheet0, 500];
+        this.POS["hook_medium_gold"] = [146, 168, 64, 71, 4 * Math.PI / 180, this.hook_sheet0, 100];
+        this.POS["hook_rock"] = [164, 80, 74, 87, 4 * Math.PI / 180, this.hook_sheet0, 20];
+        this.POS["hook_stone"] = [71, 157, 71, 74, 4 * Math.PI / 180, this.hook_sheet0, 11];
+        this.POS["hook_diamond"] = [210, 168, 48, 57, 4 * Math.PI / 180, this.hook_sheet0, 500];
+        this.POS["hook_bag"] = [2, 159, 69, 85, 4 * Math.PI / 180, this.hook_sheet0, 111];
+        this.POS["hook_tnt_fragment"] = [170, 0, 79, 81, 4 * Math.PI / 180, this.hook_sheet0, 1];
+
+        this.caught_item = "hook_pig_diamond";
+    }
+
     render() {
         let scale = this.playground.scale;
+        let canvas = {
+            width: this.ctx.canvas.width,
+            height: this.ctx.canvas.height,
+            scale: this.ctx.canvas.height / 920,
+        };
 
+        // 绘制碰撞体积
         this.ctx.beginPath();
         this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
         this.ctx.fillStyle = "white";
         this.ctx.fill();
 
+        let icon_pos = this.POS[this.caught_item];
+        this.direction_flag = 3;
+
+        // if (this.caught_item === 0) {
+        //     icon_pos = this.POS["hook"];
+        // } else if (this.caught_item === 1) {
+        //     icon_pos = this.POS["hook_huge_gold"];
+        // } else if (this.caught_item === 2) {
+        //     icon_pos = this.POS["hook_half_huge_gold"];
+        // } else if (this.caught_item === 3) {
+        //     icon_pos = this.POS["hook_medium_gold"];
+        // } else if (this.caught_item === 4) {
+        //     icon_pos = this.POS["hook_little_gold"];
+        // }
+
+        this.draw_hook_image(canvas, scale, icon_pos);
+        this.timer += 0.2;
+    }
+
+    draw_hook_image(canvas, scale, icon_pos) {
         this.ctx.save();
+        this.ctx.translate(this.x * scale, this.y * scale);
+        this.ctx.rotate(-this.angle - icon_pos[4]);
+        this.ctx.drawImage(
+            icon_pos[5], icon_pos[0], icon_pos[1], icon_pos[2], icon_pos[3],
+            -icon_pos[2] / 2 * canvas.scale,
+            -this.radius * scale,
+            icon_pos[2] * canvas.scale,
+            icon_pos[3] * canvas.scale
+        );
+        this.ctx.restore();
     }
 }
