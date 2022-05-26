@@ -22,9 +22,9 @@ export class Hook extends AcGameObject {
 
         this.direction_tmp = 0;  // 记录发射钩子前的摆动方向
         this.direction = Math.PI / 2 * (this.timedelta / 1000);
-        this.base_tile_length = 0.1;  // 0.1对应20个propetile
+        this.min_tile_length = 0.1;  // 0.1对应20个propetile
         this.max_tile_length = 0.7;
-        this.tile_length = this.base_tile_length;
+        this.tile_length = this.min_tile_length;
         this.base_moved = 0.009;
         this.moved = 0;
         this.catched = false;  // 是否抓到东西
@@ -149,7 +149,7 @@ export class Hook extends AcGameObject {
         }
 
         // 收回状态并且钩子收到最短就重新开始转动
-        if (this.direction_flag === 4 && Math.abs(this.tile_length - this.base_tile_length) < this.eps) {
+        if (this.direction_flag === 4 && Math.abs(this.tile_length - this.min_tile_length) < this.eps) {
             this.direction_flag = this.direction_tmp;
             // 如果抓回了东西就计算价值
             if (this.catched) {
@@ -252,7 +252,7 @@ export class Hook extends AcGameObject {
         // this.direction_flag = 3;
 
         // 按照长度绘制绳子
-        let num = Math.ceil(this.tile_length / this.base_tile_length * 20);
+        let num = Math.ceil(this.tile_length / this.min_tile_length * 20);
         this.draw_tile(canvas, scale, this.angle + 18 * Math.PI / 180, num);
         // 绘制钩子（抓到东西也用这个函数）
         this.draw_hook_image(canvas, scale, icon_pos);

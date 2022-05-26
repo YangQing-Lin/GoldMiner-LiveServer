@@ -1,4 +1,5 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
+import { Mineral } from "/static/js/src/playground/mineral/zbase.js";
 
 export class GameBackground extends AcGameObject {
     constructor(root, playground, game_background_ctx) {
@@ -8,6 +9,8 @@ export class GameBackground extends AcGameObject {
         this.ctx = game_background_ctx;
         this.is_start = false;
         this.time = 0;
+
+        this.eps = 0.01;
 
         this.load_image();
         this.add_POS();
@@ -24,7 +27,7 @@ export class GameBackground extends AcGameObject {
     }
 
     late_start() {
-        this.render();
+
     }
 
     resize() {
@@ -32,6 +35,78 @@ export class GameBackground extends AcGameObject {
         this.ctx.canvas.height = this.playground.height;
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.render();
+
+        this.test_draw_minerable();
+    }
+
+    test_draw_minerable() {
+        if (!this.playground.players || this.playground.players.length === 0) {
+            return false;
+        }
+
+        // 获得玩家、可生成的最大长度、可生成的最小长度、可生成的最大角度
+        let player = this.playground.players[0];
+        let max_length = player.hook.max_tile_length * 0.8;
+        let min_length = player.hook.min_tile_length * 2;
+        let max_angle = player.hook.max_angle * 0.9;
+
+        // 随机了多少次
+        let random_times = 0;
+
+        let mineral_name = "gold_1";
+        for (let i = 0; i < 10; i++) {
+            // 初始化变量
+            let random_length = 0,
+                random_angle = 0,
+                random_x = 0,
+                random_y = 0;
+
+            // 循环判断随机生成的是否合法，角度也要重新生成，因为可能一排都占满了
+            while (!this.is_create_collision(random_x, random_y, random_length, min_length, mineral_name)) {
+                random_length = Math.random() * max_length;
+                // 用长度和角度计算随机的位置，方便判断是否和已经生成的矿物位置重合
+                random_angle = Math.random() * max_angle * 2 - max_angle;
+                random_x = player.x + Math.sin(random_angle) * random_length;
+                random_y = player.y + Math.cos(random_angle) * random_length;
+
+                random_times += 1;
+            }
+
+            // 生成随机定点的矿物
+            this.playground.miners.push(new Mineral(this.playground, random_x, random_y, mineral_name));
+        }
+
+        console.log("random times:", random_times);
+    }
+
+    // 传入：随机位置、随机角度、确定的最小长度、随机的矿物名称
+    // 返回：随机的矿物是否合法
+    is_create_collision(random_x, random_y, random_length, min_length, mineral_name) {
+        // 初始值直接不合法（这样之前的while循环可以少写点代码，更加干净）
+        if (!random_x || !random_y || random_x === 0 || random_y === 0) {
+            return false;
+        }
+
+        // 随机的距离太短了，不合法
+        if (random_length <= min_length) {
+            return false;
+        }
+
+        // 遍历所有已经生成的矿物，如果重合了就不合法
+        let random_mineral_radius = this.POS[mineral_name][3];
+        for (let mineral of this.playground.miners) {
+            if (this.get_dist(mineral.x, mineral.y, random_x, random_y) - (mineral.radius + random_mineral_radius) <= this.eps) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    get_dist(x1, y1, x2, y2) {
+        let dx = x1 - x2;
+        let dy = y1 - y2;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     update() {
@@ -39,10 +114,6 @@ export class GameBackground extends AcGameObject {
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
             this.resize();
-        }
-
-        if (this.is_start) {
-            // this.playground.miners.push(new Miner)
         }
     }
 

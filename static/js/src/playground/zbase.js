@@ -100,7 +100,7 @@ export class AcGamePlayground {
         this.players.push(new Player(this, this.width / 2 / this.scale, 4.3 / 16, 0.04, "me", "test", "/static/image/icon/head.jpg"));
 
         // 加入矿物
-        this.miners.push(new Mineral(this, 0.3, 0.6));
+        this.miners.push(new Mineral(this, 0.3, 0.6, "diamond"));
     }
 
     hide() {  // 关闭playground界面

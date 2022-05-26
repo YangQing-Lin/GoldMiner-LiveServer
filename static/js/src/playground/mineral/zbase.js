@@ -9,8 +9,9 @@ export class Mineral extends AcGameObject {
         this.y = y;
         this.name = name;
 
+        console.log("new Mineral:", this.name);
+
         this.radius = 0.03;
-        this.select_item = "gold_1";
 
         this.money = 1;
         this.weight = 1;
@@ -114,13 +115,9 @@ export class Mineral extends AcGameObject {
         this.POS["bone"] = [this.bone, 7, 0 * rad, 0.024];
         this.POS["skull"] = [this.skull, 20, 0 * rad, 0.024];
         this.POS["diamond"] = [this.diamond, 500, 0 * rad, 0.016];
-
-        this.select_item = "diamond";
     }
 
     render() {
-        console.log("in render!!!");
-
         let scale = this.playground.scale;
         let canvas = {
             width: this.ctx.canvas.width,
@@ -128,7 +125,7 @@ export class Mineral extends AcGameObject {
             scale: this.ctx.canvas.height / 920,
         };
 
-        let icon_pos = this.POS[this.select_item];
+        let icon_pos = this.POS[this.name];
         // 绘制碰撞体积
         this.draw_collision_volume(scale, icon_pos);
         // 绘制图片
@@ -137,8 +134,6 @@ export class Mineral extends AcGameObject {
 
     // 绘制矿物的碰撞体积
     draw_collision_volume(scale, icon_pos) {
-        console.log(this.x, this.y);
-        console.log(this.x * scale, this.y * scale);
         this.ctx.beginPath();
         this.ctx.arc(this.x * scale, this.y * scale, icon_pos[3] * scale, 0, Math.PI * 2, false);
         this.ctx.fillStyle = "red";
