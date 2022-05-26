@@ -14,10 +14,11 @@ export class Player extends AcGameObject {
         this.photo = photo;
 
         this.money = 0;
-        if (this.character !== "robot") {
-            this.img = new Image();
-            this.img.src = this.photo;
-        }
+
+        // if (this.character !== "robot") {
+        //     this.img = new Image();
+        //     this.img.src = this.photo;
+        // }
     }
 
     start() {
@@ -97,7 +98,7 @@ export class Player extends AcGameObject {
         let scale = this.playground.scale;
 
         // 如果是自己就画出头像，如果是敌人就用颜色代替
-        if (this.character !== "robot") {
+        if (this.img) {
             this.ctx.save();
             this.ctx.beginPath();
             this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);

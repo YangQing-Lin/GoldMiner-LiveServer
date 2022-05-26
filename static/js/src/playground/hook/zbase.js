@@ -23,7 +23,7 @@ export class Hook extends AcGameObject {
 
         this.direction_tmp = 0;  // 记录发射钩子前的摆动方向
         this.direction = Math.PI / 2 * (this.timedelta / 1000);
-        this.base_tile_length = 0.1;
+        this.base_tile_length = 0.1;  // 0.1对应20个propetile
         this.max_tile_length = 0.6;
         this.tile_length = this.base_tile_length;
         this.moved = 0;
@@ -192,8 +192,11 @@ export class Hook extends AcGameObject {
         this.hook_sheet0 = new Image();
         this.hook_sheet0.src = "/static/image/playground/hook-sheet0.png";
 
+        this.ropetile = new Image();
+        this.ropetile.src = "/static/image/playground/ropetile.png";
+
         this.images = [
-            this.hook_sheet1, this.hook_sheet0,
+            this.hook_sheet1, this.hook_sheet0, this.ropetile,
         ];
     }
 
@@ -224,7 +227,7 @@ export class Hook extends AcGameObject {
         this.POS["hook_bag"] = [2, 159, 69, 85, 4 * Math.PI / 180, this.hook_sheet0, 111];
         this.POS["hook_tnt_fragment"] = [170, 0, 79, 81, 4 * Math.PI / 180, this.hook_sheet0, 1];
 
-        this.caught_item = "hook_pig_diamond";
+        this.caught_item = "hook";
     }
 
     render() {
@@ -242,22 +245,34 @@ export class Hook extends AcGameObject {
         this.ctx.fill();
 
         let icon_pos = this.POS[this.caught_item];
-        this.direction_flag = 3;
-
-        // if (this.caught_item === 0) {
-        //     icon_pos = this.POS["hook"];
-        // } else if (this.caught_item === 1) {
-        //     icon_pos = this.POS["hook_huge_gold"];
-        // } else if (this.caught_item === 2) {
-        //     icon_pos = this.POS["hook_half_huge_gold"];
-        // } else if (this.caught_item === 3) {
-        //     icon_pos = this.POS["hook_medium_gold"];
-        // } else if (this.caught_item === 4) {
-        //     icon_pos = this.POS["hook_little_gold"];
-        // }
+        // this.direction_flag = 3;
 
         this.draw_hook_image(canvas, scale, icon_pos);
+        // 按照长度绘制绳子
+        let num = Math.ceil(this.tile_length / 0.1 * 20);
+        this.draw_tile(canvas, scale, this.angle + 18 * Math.PI / 180, num);
         this.timer += 0.2;
+    }
+
+    draw_tile(canvas, scale, angle, num) {
+        this.ctx.save();
+        // 计算坐标系偏移量，让绳子居中
+        this.ctx.translate(
+            this.player.x * scale - (this.ropetile.width + 5) / 2 * canvas.scale,
+            this.player.y * scale
+        );
+        this.ctx.rotate(-angle);
+        for (let i = 1; i < num; i++) {
+            this.ctx.drawImage(
+                this.ropetile, 0, 0, this.ropetile.width, this.ropetile.height,
+                -this.ropetile.height * Math.sin(20 * Math.PI / 180) * canvas.scale * i,
+                this.ropetile.height / Math.cos(20 * Math.PI / 180) * canvas.scale * i,
+                this.ropetile.width * canvas.scale,
+                this.ropetile.height * canvas.scale
+            );
+            // console.log(Math.cos(angle));
+        }
+        this.ctx.restore();
     }
 
     draw_hook_image(canvas, scale, icon_pos) {
