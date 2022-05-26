@@ -10,6 +10,7 @@
 - 绘制游戏背景图片
 - 绘制图标和数字槽
 - 绘制数字
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/20220526101304.png)
 
 ### 2022-05-24
 
