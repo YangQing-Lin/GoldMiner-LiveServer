@@ -13,6 +13,7 @@ export class Player extends AcGameObject {
         this.username = username;
         this.photo = photo;
 
+        this.money = 0;
         if (this.character !== "robot") {
             this.img = new Image();
             this.img.src = this.photo;
@@ -22,7 +23,7 @@ export class Player extends AcGameObject {
     start() {
         this.add_listening_events();
 
-        this.hook = new Hook(this.playground, this);
+        this.hook = new Hook(this.playground, this, this.playground.game_map.score_number);
     }
 
     create_uuid() {

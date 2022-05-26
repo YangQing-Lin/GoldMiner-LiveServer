@@ -28,8 +28,8 @@ export class GameBackground extends AcGameObject {
 
     add_POS() {
         this.POS = new Array();
-        this.POS["money"] = [0, 0, 64, 48, 100, 30, 4];
-        this.POS["target"] = [65, 0, 50, 50, 100, 110, 4];
+        this.POS["money"] = [0, 0, 64, 48, 100, 30, 5];
+        this.POS["target"] = [65, 0, 50, 50, 100, 110, 5];
         this.POS["level"] = [0, 49, 51, 51, 800, 30, 3];
         this.POS["timer"] = [52, 50, 46, 55, 800, 110, 3];
         this.POS["gamepatch_head"] = [0, 0, 14, 64];
@@ -97,8 +97,6 @@ export class GameBackground extends AcGameObject {
     }
 
     render() {
-        console.log("start render background");
-
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
@@ -110,12 +108,6 @@ export class GameBackground extends AcGameObject {
         this.draw_bg_tile(canvas);  // 画泥土分层
         this.draw_ground_tile(canvas);  // 画地面
         this.draw_scoreboard_background(canvas);
-
-        // this.ctx.fillStyle = "#000000";
-        // this.ctx.fillRect(
-        //     0, canvas.height * 0.2,
-        //     canvas.width * 0.1, canvas.height * 0.1
-        // );
     }
 
     draw_scoreboard_background(canvas) {

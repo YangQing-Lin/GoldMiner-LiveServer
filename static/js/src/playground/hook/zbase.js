@@ -2,16 +2,18 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 
 export class Hook extends AcGameObject {
-    constructor(playground, player) {
+    constructor(playground, player, score_number) {
         super();
         this.playground = playground;
         this.ctx = this.playground.game_map.ctx;
         this.player = player;
+        this.score_number = score_number;
 
         this.x = null;
         this.y = null;
         this.radius = 0.012;
-        this.angle = Math.PI / 2;
+        this.angle = 0;
+        this.max_angle = Math.PI * 7 / 18;
 
         // 1：向左摆动，2：向右摆动，3：发射钩子，4：收回钩子
         this.direction_flag = 1;
@@ -67,9 +69,11 @@ export class Hook extends AcGameObject {
     add_money() {
         let miner = this.update_catch();
         if (miner) {
-            this.money += miner.money;
+            this.score_number.money_number += miner.money;
+            this.player.money += miner.money;
+            this.score_number.render();
             miner.destroy();
-            console.log("money:", this.money);
+            console.log("money:", this.score_number.money_number);
         }
     }
 
@@ -126,7 +130,8 @@ export class Hook extends AcGameObject {
         if (this.timedelta / 1000 > 1 / 50) {
             return false;
         }
-        this.direction = Math.PI / 2 * (this.timedelta / 1000);
+        // 控制钩子摆动速度
+        this.direction = this.max_angle * (this.timedelta / 1000);
 
         // 控制钩子转动方向和是否转动
         if (this.direction_flag === 1) {
@@ -136,9 +141,9 @@ export class Hook extends AcGameObject {
         }
 
         // 控制钩子转向
-        if (this.angle < -Math.PI / 2) {
+        if (this.angle < -this.max_angle) {
             this.direction_flag = 2;
-        } else if (this.angle > Math.PI / 2) {
+        } else if (this.angle > this.max_angle) {
             this.direction_flag = 1;
         }
 
@@ -156,5 +161,7 @@ export class Hook extends AcGameObject {
         this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
         this.ctx.fillStyle = "white";
         this.ctx.fill();
+
+        this.ctx.save();
     }
 }
