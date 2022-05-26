@@ -40,6 +40,10 @@ export class GameBackground extends AcGameObject {
             this.is_start = true;
             this.resize();
         }
+
+        if (this.is_start) {
+            // this.playground.miners.push(new Miner)
+        }
     }
 
     is_all_images_loaded() {
@@ -52,44 +56,62 @@ export class GameBackground extends AcGameObject {
     }
 
     load_image() {
+        // 各种背景板的图片
         this.groundtile = new Image();
         this.groundtile.src = "/static/image/playground/groundtile.png";
-
         this.purpletile = new Image();
         this.purpletile.src = "/static/image/playground/purpletile.png";
-
         this.bgtile3 = new Image();
         this.bgtile3.src = "/static/image/playground/bgtile3.png";
-
         this.bgtile2 = new Image();
         this.bgtile2.src = "/static/image/playground/bgtile2.png";
-
         this.bgtile1 = new Image();
         this.bgtile1.src = "/static/image/playground/bgtile1.png";
-
         this.bgtile4 = new Image();
         this.bgtile4.src = "/static/image/playground/bgtile4.png";
-
         this.gametopbg = new Image();
         this.gametopbg.src = "/static/image/playground/gametopbg.png";
-
         this.uisymbols_sheet0 = new Image();
         this.uisymbols_sheet0.src = "/static/image/playground/uisymbols-sheet0.png";
-
         this.gamepatch = new Image();
         this.gamepatch.src = "/static/image/playground/gamepatch.png";
-
         this.miner_roll_sheet0 = new Image();
         this.miner_roll_sheet0.src = "/static/image/playground/miner_miner_roll-sheet0.png";
+
+        // 单独矿物的图片
+        this.gold_1 = new Image();
+        this.gold_1.src = "/static/image/playground/g1-sheet0.png";
+        this.gold_2 = new Image();
+        this.gold_2.src = "/static/image/playground/g2-sheet0.png";
+        this.gold_3 = new Image();
+        this.gold_3.src = "/static/image/playground/g3-sheet0.png";
+        this.gold_4 = new Image();
+        this.gold_4.src = "/static/image/playground/g4-sheet0.png";
+        this.rock_1 = new Image();
+        this.rock_1.src = "/static/image/playground/r1-sheet0.png";
+        this.rock_2 = new Image();
+        this.rock_2.src = "/static/image/playground/r2-sheet0.png";
+        this.bone = new Image();
+        this.bone.src = "/static/image/playground/bone-sheet0.png";
+        this.skull = new Image();
+        this.skull.src = "/static/image/playground/skull-sheet0.png";
+        this.diamond = new Image();
+        this.diamond.src = "/static/image/playground/diamond-sheet0.png";
 
         this.images = [
             this.groundtile, this.purpletile, this.bgtile1, this.bgtile2,
             this.bgtile3, this.bgtile4, this.gametopbg, this.uisymbols_sheet0,
             this.gamepatch, this.miner_roll_sheet0,
+
+            this.gold_1, this.gold_2, this.gold_3, this.gold_4, this.rock_1, this.rock_2,
+            this.bone, this.skull, this.diamond,
         ];
     }
 
     add_POS() {
+        let rad = Math.PI / 180;
+
+        // 背景板的位置信息
         this.POS = new Array();
         this.POS["money"] = [0, 0, 64, 48, 100, 30, 5];
         this.POS["target"] = [65, 0, 50, 50, 100, 110, 5];
@@ -98,7 +120,21 @@ export class GameBackground extends AcGameObject {
         this.POS["gamepatch_head"] = [0, 0, 14, 64];
         this.POS["gamepatch_item"] = [15, 0, 39, 64];
         this.POS["gamepatch_tile"] = [56, 0, 14, 64];
-        // this.POS["miner_roll_sheet0"] = [];
+
+        // 单独矿物图片的各种信息
+        // 1：引用的图片
+        // 2：价格
+        // 3：旋转角度（一般用不到，后面如果所有矿物都同一个方向觉得单调可以加个随机值）
+        // 4：碰撞体积半径
+        this.POS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014];
+        this.POS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029];
+        this.POS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06];
+        this.POS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076];
+        this.POS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03];
+        this.POS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033];
+        this.POS["bone"] = [this.bone, 7, 0 * rad, 0.024];
+        this.POS["skull"] = [this.skull, 20, 0 * rad, 0.024];
+        this.POS["diamond"] = [this.diamond, 500, 0 * rad, 0.016];
     }
 
     render() {

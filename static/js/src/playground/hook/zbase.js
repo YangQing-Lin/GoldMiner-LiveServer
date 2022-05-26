@@ -18,14 +18,14 @@ export class Hook extends AcGameObject {
         // 1：向左摆动，2：向右摆动，3：发射钩子，4：收回钩子
         this.direction_flag = 1;
         // 抓到的物品
-        // 0：空钩子，1：半大金块，2：小金块，3：大金块
         this.caught_item = "hook";
 
         this.direction_tmp = 0;  // 记录发射钩子前的摆动方向
         this.direction = Math.PI / 2 * (this.timedelta / 1000);
         this.base_tile_length = 0.1;  // 0.1对应20个propetile
-        this.max_tile_length = 0.6;
+        this.max_tile_length = 0.7;
         this.tile_length = this.base_tile_length;
+        this.base_moved = 0.009;
         this.moved = 0;
         this.catched = false;  // 是否抓到东西
         this.money = 0;
@@ -56,7 +56,7 @@ export class Hook extends AcGameObject {
 
         this.direction_tmp = this.direction_flag;
         this.direction_flag = 3;
-        this.moved = 0.009;
+        this.moved = this.base_moved;
     }
 
     update() {
@@ -68,7 +68,7 @@ export class Hook extends AcGameObject {
 
     // 钩子的图片在最后绘制，这样就能显示在最上层
     late_update() {
-        // 图片都加载好之后执行一次resize
+        // 图片都加载好之后执行一次render
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
         } else {
@@ -141,8 +141,10 @@ export class Hook extends AcGameObject {
                 let miner = this.update_catch();
                 if (miner) {
                     miner.is_catched = true;
-                    this.moved = this.moved * ((200 - miner.weight) / 200);
+                    this.moved = this.base_moved * ((200 - miner.weight) / 200);
                 }
+            } else {
+                this.moved = this.base_moved * 2;  // 钩子收回时速度更快
             }
         }
 
@@ -201,31 +203,33 @@ export class Hook extends AcGameObject {
     }
 
     add_POS() {
-        this.POS = new Array();
+        let rad = Math.PI / 180;
+
         // 0~3：图片坐标和长宽
         // 4：图片旋转角度
         // 5：引用的图片
         // 6：价格
+        this.POS = new Array();
         this.POS["hook"] = [
             139, 66, 53, 36,
-            0 * Math.PI / 180,
+            0 * rad,
             this.hook_sheet1,
             0
         ];
-        this.POS["hook_half_huge_gold"] = [0, 0, 133, 128, 2 * Math.PI / 180, this.hook_sheet1, 250];
-        this.POS["hook_little_gold"] = [201, 113, 44, 50, 4 * Math.PI / 180, this.hook_sheet1, 30];
-        this.POS["hook_skull"] = [145, 0, 58, 66, 4 * Math.PI / 180, this.hook_sheet1, 20];
-        this.POS["hook_bone"] = [142, 112, 61, 43, 4 * Math.PI / 180, this.hook_sheet1, 7];
-        this.POS["hook_pig"] = [200, 58, 51, 55, 4 * Math.PI / 180, this.hook_sheet1, 2];
-        this.POS["hook_pig_diamond"] = [199, 0, 53, 57, -2 * Math.PI / 180, this.hook_sheet1, 502];
+        this.POS["hook_gold_3"] = [0, 0, 133, 128, 2 * rad, this.hook_sheet1, 250];
+        this.POS["hook_gold_1"] = [201, 113, 44, 50, 4 * rad, this.hook_sheet1, 30];
+        this.POS["hook_skull"] = [145, 0, 58, 66, 4 * rad, this.hook_sheet1, 20];
+        this.POS["hook_bone"] = [142, 112, 61, 43, 4 * rad, this.hook_sheet1, 7];
+        this.POS["hook_pig"] = [200, 58, 51, 55, 4 * rad, this.hook_sheet1, 2];
+        this.POS["hook_pig_diamond"] = [199, 0, 53, 57, -2 * rad, this.hook_sheet1, 502];
 
-        this.POS["hook_huge_gold"] = [0, 0, 154, 158, 4 * Math.PI / 180, this.hook_sheet0, 500];
-        this.POS["hook_medium_gold"] = [146, 168, 64, 71, 4 * Math.PI / 180, this.hook_sheet0, 100];
-        this.POS["hook_rock"] = [164, 80, 74, 87, 4 * Math.PI / 180, this.hook_sheet0, 20];
-        this.POS["hook_stone"] = [71, 157, 71, 74, 4 * Math.PI / 180, this.hook_sheet0, 11];
-        this.POS["hook_diamond"] = [210, 168, 48, 57, 4 * Math.PI / 180, this.hook_sheet0, 500];
-        this.POS["hook_bag"] = [2, 159, 69, 85, 4 * Math.PI / 180, this.hook_sheet0, 111];
-        this.POS["hook_tnt_fragment"] = [170, 0, 79, 81, 4 * Math.PI / 180, this.hook_sheet0, 1];
+        this.POS["hook_gold_4"] = [0, 0, 154, 158, 4 * rad, this.hook_sheet0, 500];
+        this.POS["hook_gold_2"] = [146, 168, 64, 71, 4 * rad, this.hook_sheet0, 100];
+        this.POS["hook_rock_1"] = [71, 157, 71, 74, 4 * rad, this.hook_sheet0, 11];
+        this.POS["hook_rock_2"] = [164, 80, 74, 87, 4 * rad, this.hook_sheet0, 20];
+        this.POS["hook_diamond"] = [210, 168, 48, 57, 4 * rad, this.hook_sheet0, 500];
+        this.POS["hook_bag"] = [2, 159, 69, 85, 4 * rad, this.hook_sheet0, 111];
+        this.POS["hook_tnt_fragment"] = [170, 0, 79, 81, 4 * rad, this.hook_sheet0, 1];
 
         this.caught_item = "hook";
     }
@@ -248,8 +252,9 @@ export class Hook extends AcGameObject {
         // this.direction_flag = 3;
 
         // 按照长度绘制绳子
-        let num = Math.ceil(this.tile_length / 0.1 * 20);
+        let num = Math.ceil(this.tile_length / this.base_tile_length * 20);
         this.draw_tile(canvas, scale, this.angle + 18 * Math.PI / 180, num);
+        // 绘制钩子（抓到东西也用这个函数）
         this.draw_hook_image(canvas, scale, icon_pos);
         this.timer += 0.2;
     }
