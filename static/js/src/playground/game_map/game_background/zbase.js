@@ -1,15 +1,16 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 
 export class GameBackground extends AcGameObject {
-    constructor(playground, game_background_ctx) {
+    constructor(root, playground, game_background_ctx) {
         super();
+        this.root = root;
         this.playground = playground;
         this.ctx = game_background_ctx;
         this.is_start = false;
         this.time = 0;
 
-        this.add_POS();
         this.load_image();
+        this.add_POS();
     }
 
     start() {
@@ -26,15 +27,28 @@ export class GameBackground extends AcGameObject {
         this.render();
     }
 
-    add_POS() {
-        this.POS = new Array();
-        this.POS["money"] = [0, 0, 64, 48, 100, 30, 5];
-        this.POS["target"] = [65, 0, 50, 50, 100, 110, 5];
-        this.POS["level"] = [0, 49, 51, 51, 800, 30, 3];
-        this.POS["timer"] = [52, 50, 46, 55, 800, 110, 3];
-        this.POS["gamepatch_head"] = [0, 0, 14, 64];
-        this.POS["gamepatch_item"] = [15, 0, 39, 64];
-        this.POS["gamepatch_tile"] = [56, 0, 14, 64];
+    resize() {
+        this.ctx.canvas.width = this.playground.width;
+        this.ctx.canvas.height = this.playground.height;
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.render();
+    }
+
+    update() {
+        // 图片都加载好之后执行一次resize
+        if (!this.is_start && this.is_all_images_loaded()) {
+            this.is_start = true;
+            this.resize();
+        }
+    }
+
+    is_all_images_loaded() {
+        for (let img of this.images) {
+            if (!img.is_load) {
+                return false;
+            }
+        }
+        return true;
     }
 
     load_image() {
@@ -65,35 +79,26 @@ export class GameBackground extends AcGameObject {
         this.gamepatch = new Image();
         this.gamepatch.src = "/static/image/playground/gamepatch.png";
 
+        this.miner_roll_sheet0 = new Image();
+        this.miner_roll_sheet0.src = "/static/image/playground/miner_miner_roll-sheet0.png";
+
         this.images = [
             this.groundtile, this.purpletile, this.bgtile1, this.bgtile2,
             this.bgtile3, this.bgtile4, this.gametopbg, this.uisymbols_sheet0,
-            this.gamepatch,
+            this.gamepatch, this.miner_roll_sheet0,
         ];
     }
 
-    resize() {
-        this.ctx.canvas.width = this.playground.width;
-        this.ctx.canvas.height = this.playground.height;
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.render();
-    }
-
-    update() {
-        // 图片都加载好之后执行一次resize
-        if (!this.is_start && this.is_all_images_loaded()) {
-            this.is_start = true;
-            this.resize();
-        }
-    }
-
-    is_all_images_loaded() {
-        for (let img of this.images) {
-            if (!img.is_load) {
-                return false;
-            }
-        }
-        return true;
+    add_POS() {
+        this.POS = new Array();
+        this.POS["money"] = [0, 0, 64, 48, 100, 30, 5];
+        this.POS["target"] = [65, 0, 50, 50, 100, 110, 5];
+        this.POS["level"] = [0, 49, 51, 51, 800, 30, 3];
+        this.POS["timer"] = [52, 50, 46, 55, 800, 110, 3];
+        this.POS["gamepatch_head"] = [0, 0, 14, 64];
+        this.POS["gamepatch_item"] = [15, 0, 39, 64];
+        this.POS["gamepatch_tile"] = [56, 0, 14, 64];
+        // this.POS["miner_roll_sheet0"] = [];
     }
 
     render() {
@@ -107,6 +112,9 @@ export class GameBackground extends AcGameObject {
         this.draw_dirt_color(canvas);  // 画泥土背景颜色
         this.draw_bg_tile(canvas);  // 画泥土分层
         this.draw_ground_tile(canvas);  // 画地面
+
+        this.draw_miner_roll(canvas, this.miner_roll_sheet0);  // 画卷线器
+
         this.draw_scoreboard_background(canvas);
     }
 
@@ -116,6 +124,23 @@ export class GameBackground extends AcGameObject {
         this.draw_scoreboard_background_item(canvas, this.POS["target"]);
         this.draw_scoreboard_background_item(canvas, this.POS["level"]);
         this.draw_scoreboard_background_item(canvas, this.POS["timer"]);
+    }
+
+    // 画卷线器
+    draw_miner_roll(canvas, img) {
+        let scale = this.playground.scale;
+        if (this.playground.players && this.playground.players.length > 0) {
+            for (let player of this.playground.players) {
+                player.render();  // 绘制用户头像
+                this.ctx.drawImage(
+                    img, 0, 0, img.width, img.height,
+                    player.x * scale - img.width / 2 * canvas.scale,
+                    player.y * scale - img.height / 2 * canvas.scale,
+                    img.width * canvas.scale, img.height * canvas.scale
+                );
+            }
+        }
+
     }
 
     // 按照传入的位置参数绘制图标和数字槽

@@ -241,16 +241,16 @@ export class Hook extends AcGameObject {
         // 绘制碰撞体积
         this.ctx.beginPath();
         this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = "white";
+        this.ctx.fillStyle = "blue";
         this.ctx.fill();
 
         let icon_pos = this.POS[this.caught_item];
         // this.direction_flag = 3;
 
-        this.draw_hook_image(canvas, scale, icon_pos);
         // 按照长度绘制绳子
         let num = Math.ceil(this.tile_length / 0.1 * 20);
         this.draw_tile(canvas, scale, this.angle + 18 * Math.PI / 180, num);
+        this.draw_hook_image(canvas, scale, icon_pos);
         this.timer += 0.2;
     }
 

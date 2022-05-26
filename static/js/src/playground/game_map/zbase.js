@@ -3,8 +3,9 @@ import { GameBackground } from "/static/js/src/playground/game_map/game_backgrou
 import { ScoreNumber } from "/static/js/src/playground/game_map/score_number/zbase.js";
 
 export class GameMap extends AcGameObject {
-    constructor(playground) {
+    constructor(root, playground) {
         super();  // 调用基类的构造函数
+        this.root = root;
         this.playground = playground;
 
         this.$canvasDiv = $(`<div id="canvasDiv" class="canvasDiv"></div>`);
@@ -18,7 +19,7 @@ export class GameMap extends AcGameObject {
         this.ctx = this.$canvas[0].getContext('2d');
 
 
-        this.game_background = new GameBackground(this.playground, this.game_background_ctx);
+        this.game_background = new GameBackground(this.root, this.playground, this.game_background_ctx);
         this.score_number = new ScoreNumber(this.playground, this.game_score_number_ctx);
 
         this.initScreen();

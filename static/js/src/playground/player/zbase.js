@@ -15,10 +15,10 @@ export class Player extends AcGameObject {
 
         this.money = 0;
 
-        // if (this.character !== "robot") {
-        //     this.img = new Image();
-        //     this.img.src = this.photo;
-        // }
+        if (this.character !== "robot") {
+            this.img = new Image();
+            this.img.src = this.photo;
+        }
     }
 
     start() {
@@ -97,18 +97,21 @@ export class Player extends AcGameObject {
     render() {
         let scale = this.playground.scale;
 
+        let photo_x = this.x + this.radius * 2;
+        let photo_y = this.y - this.radius * 0.5;
+
         // 如果是自己就画出头像，如果是敌人就用颜色代替
         if (this.img) {
             this.ctx.save();
             this.ctx.beginPath();
-            this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
+            this.ctx.arc(photo_x * scale, photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
             this.ctx.clip();
-            this.ctx.drawImage(this.img, (this.x - this.radius) * scale, (this.y - this.radius) * scale, this.radius * 2 * scale, this.radius * 2 * scale);
+            this.ctx.drawImage(this.img, (photo_x - this.radius) * scale, (photo_y - this.radius) * scale, this.radius * 2 * scale, this.radius * 2 * scale);
             this.ctx.restore();
         } else {
             this.ctx.beginPath();
-            this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
-            this.ctx.fillStyle = this.color;
+            this.ctx.arc(photo_x * scale, photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
+            this.ctx.fillStyle = "white";
             this.ctx.fill();
         }
     }

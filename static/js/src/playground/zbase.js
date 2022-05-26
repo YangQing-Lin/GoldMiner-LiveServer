@@ -86,7 +86,7 @@ export class AcGamePlayground {
 
         this.width = this.$playground.width();
         this.height = this.$playground.height();
-        this.game_map = new GameMap(this);
+        this.game_map = new GameMap(this.root, this);
 
         this.mode = mode;
         this.state = "waiting";  // waiting -> fighting -> over
