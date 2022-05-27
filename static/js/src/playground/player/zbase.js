@@ -7,6 +7,7 @@ export class Player extends AcGameObject {
         super();
         this.playground = playground;
         this.ctx = this.playground.game_map.ctx;
+        this.game_background = this.playground.game_map.game_background;
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -79,10 +80,28 @@ export class Player extends AcGameObject {
 
             if (e.which === 32) {  // 空格，出勾
                 outer.hook.tick();
+                return false;
+            } else if (e.which === 38) {  // ↑，放炸弹
+                outer.use_bomb();
+                return false;
             }
 
             return true;
         });
+    }
+
+    use_bomb() {
+        if (this.bomb.number <= 0 || !this.hook.catched) {
+            return false;
+        }
+
+        this.hook.caught_item = "hook";  // 重置钩子图标
+        this.hook.catched = false;  // 没抓到东西
+        // this.hook.direction_flag = 4;  // 定成收回状态（可能不用）（确实不用）
+        this.hook.moved = this.hook.base_moved * 2;  // 重置钩子收回速度
+
+        this.bomb.number -= 1;
+        this.game_background.render();  // 减去炸弹数量之后要刷新一次背景图
     }
 
     // 获取两点之间的直线距离

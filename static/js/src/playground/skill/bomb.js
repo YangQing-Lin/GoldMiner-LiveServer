@@ -76,10 +76,10 @@ export class Bomb {
             scale: this.ctx.canvas.height / this.base_scale,
         };
 
-        console.log("bomb render");
         // 先拆分一下炸弹数量（因为可能大于9）
         this.get_numbers(this.number);
 
+        // 绘制炸弹图标（在这里面会初始化图标的x和y，所以顺序不能随便更改）
         this.render_bombs_prite(scale, canvas);
         this.render_bomb_number(canvas);
     }

@@ -86,7 +86,7 @@ export class Hook extends AcGameObject {
         return true;
     }
 
-    // 检测是否抓到金矿
+    // 检测是否抓到金矿，并返回抓到了那个金矿
     update_catch() {
         for (let i = 0; i < this.playground.miners.length; i++) {
             let miner = this.playground.miners[i];
