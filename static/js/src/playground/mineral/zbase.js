@@ -17,6 +17,7 @@ export class Mineral extends AcGameObject {
         this.weight = 1;
         this.is_start = false;
         this.is_catched = false;
+        this.base_scale = this.playground.game_map.game_background.base_scale;
 
         this.eps = 0.01;
 
@@ -101,20 +102,23 @@ export class Mineral extends AcGameObject {
     add_POS() {
         let rad = Math.PI / 180;
 
-        this.POS = new Array();
+        this.MINERS = new Array();
         // 1：引用的图片
         // 2：价格
         // 3：旋转角度（一般用不到，后面如果所有矿物都同一个方向觉得单调可以加个随机值）
         // 4：碰撞体积半径
-        this.POS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014];
-        this.POS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029];
-        this.POS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06];
-        this.POS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076];
-        this.POS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03];
-        this.POS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033];
-        this.POS["bone"] = [this.bone, 7, 0 * rad, 0.024];
-        this.POS["skull"] = [this.skull, 20, 0 * rad, 0.024];
-        this.POS["diamond"] = [this.diamond, 500, 0 * rad, 0.016];
+        this.MINERS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014 / this.base_scale * 920];
+        this.MINERS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029 / this.base_scale * 920];
+        this.MINERS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06 / this.base_scale * 920];
+        this.MINERS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076 / this.base_scale * 920];
+        this.MINERS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03 / this.base_scale * 920];
+        this.MINERS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033 / this.base_scale * 920];
+        this.MINERS["bone"] = [this.bone, 7, 0 * rad, 0.024 / this.base_scale * 920];
+        this.MINERS["skull"] = [this.skull, 20, 0 * rad, 0.024 / this.base_scale * 920];
+        this.MINERS["diamond"] = [this.diamond, 500, 0 * rad, 0.016 / this.base_scale * 920];
+
+        // 取出选择的矿物信息
+        this.money = this.MINERS[this.name][1];
     }
 
     render() {
@@ -122,10 +126,10 @@ export class Mineral extends AcGameObject {
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
-            scale: this.ctx.canvas.height / 920,
+            scale: this.ctx.canvas.height / this.base_scale,
         };
 
-        let icon_pos = this.POS[this.name];
+        let icon_pos = this.MINERS[this.name];
         // 绘制碰撞体积
         this.draw_collision_volume(scale, icon_pos);
         // 绘制图片

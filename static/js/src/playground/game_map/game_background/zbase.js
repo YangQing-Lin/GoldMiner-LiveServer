@@ -11,6 +11,7 @@ export class GameBackground extends AcGameObject {
         this.time = 0;
 
         this.eps = 0.01;
+        this.base_scale = 1140;  // 和矿物像素绑定的基准，用于放大和缩小矿物
 
         this.load_image();
         this.add_POS();
@@ -50,10 +51,9 @@ export class GameBackground extends AcGameObject {
         let min_length = player.hook.min_tile_length * 2;
         let max_angle = player.hook.max_angle * 0.9;
 
-        // 随机了多少次
-        let random_times = 0;
+        let random_times = 0;  // 随机循环执行了多少次
+        let mineral_name = "gold_1";  // 选择的矿物名称（之后会随机一个）
 
-        let mineral_name = "gold_1";
         for (let i = 0; i < 10; i++) {
             // 初始化变量
             let random_length = 0,
@@ -63,6 +63,8 @@ export class GameBackground extends AcGameObject {
 
             // 循环判断随机生成的是否合法，角度也要重新生成，因为可能一排都占满了
             while (!this.is_create_collision(random_x, random_y, random_length, min_length, mineral_name)) {
+                // 随机选择一个矿物
+                mineral_name = this.MINERS_NAME[Math.floor(Math.random() * this.MINERS_NAME.length)];
                 random_length = Math.random() * max_length;
                 // 用长度和角度计算随机的位置，方便判断是否和已经生成的矿物位置重合
                 random_angle = Math.random() * max_angle * 2 - max_angle;
@@ -93,7 +95,7 @@ export class GameBackground extends AcGameObject {
         }
 
         // 遍历所有已经生成的矿物，如果重合了就不合法
-        let random_mineral_radius = this.POS[mineral_name][3];
+        let random_mineral_radius = this.MINERS[mineral_name][3];
         for (let mineral of this.playground.miners) {
             if (this.get_dist(mineral.x, mineral.y, random_x, random_y) - (mineral.radius + random_mineral_radius) <= this.eps) {
                 return false;
@@ -192,20 +194,26 @@ export class GameBackground extends AcGameObject {
         this.POS["gamepatch_item"] = [15, 0, 39, 64];
         this.POS["gamepatch_tile"] = [56, 0, 14, 64];
 
-        // 单独矿物图片的各种信息
+
         // 1：引用的图片
         // 2：价格
         // 3：旋转角度（一般用不到，后面如果所有矿物都同一个方向觉得单调可以加个随机值）
         // 4：碰撞体积半径
-        this.POS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014];
-        this.POS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029];
-        this.POS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06];
-        this.POS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076];
-        this.POS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03];
-        this.POS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033];
-        this.POS["bone"] = [this.bone, 7, 0 * rad, 0.024];
-        this.POS["skull"] = [this.skull, 20, 0 * rad, 0.024];
-        this.POS["diamond"] = [this.diamond, 500, 0 * rad, 0.016];
+        this.MINERS = new Array();
+        this.MINERS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014 / this.base_scale * 920];
+        this.MINERS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029 / this.base_scale * 920];
+        this.MINERS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06 / this.base_scale * 920];
+        this.MINERS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076 / this.base_scale * 920];
+        this.MINERS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03 / this.base_scale * 920];
+        this.MINERS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033 / this.base_scale * 920];
+        this.MINERS["bone"] = [this.bone, 7, 0 * rad, 0.024 / this.base_scale * 920];
+        this.MINERS["skull"] = [this.skull, 20, 0 * rad, 0.024 / this.base_scale * 920];
+        this.MINERS["diamond"] = [this.diamond, 500, 0 * rad, 0.016 / this.base_scale * 920];
+
+        this.MINERS_NAME = new Array();
+        for (let miner in this.MINERS) {
+            this.MINERS_NAME.push(miner);
+        }
     }
 
     render() {
