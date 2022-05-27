@@ -9,14 +9,14 @@ export class Mineral extends AcGameObject {
         this.y = y;
         this.name = name;
 
-        console.log("new Mineral:", this.name);
-
+        // 一些初始变量，后面会更具数据修改
         this.radius = 0.03;
-
         this.money = 1;
         this.weight = 1;
         this.is_start = false;
         this.is_catched = false;
+
+        // 用于决定矿物图片大小
         this.base_scale = this.playground.game_map.game_background.base_scale;
 
         this.eps = 0.01;
@@ -36,11 +36,11 @@ export class Mineral extends AcGameObject {
     }
 
     update() {
-        // 图片都加载好之后执行一次render
-        if (!this.is_start && this.is_all_images_loaded()) {
-            this.is_start = true;
-            this.render();
-        }
+        // 图片都加载好之后执行一次render（不需要执行了，现在game_background加载好后会绘制一次所有的矿物）
+        // if (!this.is_start && this.is_all_images_loaded()) {
+        //     this.is_start = true;
+        //     this.render();
+        // }
     }
 
     late_update() {
@@ -68,28 +68,20 @@ export class Mineral extends AcGameObject {
     load_image() {
         this.gold_1 = new Image();
         this.gold_1.src = "/static/image/playground/g1-sheet0.png";
-
         this.gold_2 = new Image();
         this.gold_2.src = "/static/image/playground/g2-sheet0.png";
-
         this.gold_3 = new Image();
         this.gold_3.src = "/static/image/playground/g3-sheet0.png";
-
         this.gold_4 = new Image();
         this.gold_4.src = "/static/image/playground/g4-sheet0.png";
-
         this.rock_1 = new Image();
         this.rock_1.src = "/static/image/playground/r1-sheet0.png";
-
         this.rock_2 = new Image();
         this.rock_2.src = "/static/image/playground/r2-sheet0.png";
-
         this.bone = new Image();
         this.bone.src = "/static/image/playground/bone-sheet0.png";
-
         this.skull = new Image();
         this.skull.src = "/static/image/playground/skull-sheet0.png";
-
         this.diamond = new Image();
         this.diamond.src = "/static/image/playground/diamond-sheet0.png";
 
@@ -131,7 +123,7 @@ export class Mineral extends AcGameObject {
 
         let icon_pos = this.MINERS[this.name];
         // 绘制碰撞体积
-        this.draw_collision_volume(scale, icon_pos);
+        // this.draw_collision_volume(scale, icon_pos);
         // 绘制图片
         this.draw_mineral_img(canvas, scale, icon_pos);
     }
@@ -169,6 +161,9 @@ export class Mineral extends AcGameObject {
                 break;
             }
         }
+
+        // 之后tnt爆炸的时候会用到，每次矿物被删除还是刷新一下背景，保险一点
+        this.playground.game_map.game_background.render();
     }
 
 }

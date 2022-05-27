@@ -34,10 +34,8 @@ export class GameBackground extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.render();
-
         this.test_draw_minerable();
+        this.render();
     }
 
     test_draw_minerable() {
@@ -72,6 +70,10 @@ export class GameBackground extends AcGameObject {
                 random_y = player.y + Math.cos(random_angle) * random_length;
 
                 random_times += 1;
+                if (random_times >= 10000) {
+                    console.log("ERROR: too many random!!!");
+                    break;
+                }
             }
 
             // 生成随机定点的矿物
@@ -217,6 +219,9 @@ export class GameBackground extends AcGameObject {
     }
 
     render() {
+        // 先清空屏幕
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
@@ -230,7 +235,17 @@ export class GameBackground extends AcGameObject {
 
         this.draw_miner_roll(canvas, this.miner_roll_sheet0);  // 画卷线器
 
-        this.draw_scoreboard_background(canvas);
+        this.draw_scoreboard_background(canvas);  // 绘制金钱数量背景
+        this.draw_all_minerals();
+    }
+
+    // 绘制所有矿物
+    draw_all_minerals() {
+        if (this.playground.miners) {
+            for (let miner of this.playground.miners) {
+                miner.render();
+            }
+        }
     }
 
     draw_scoreboard_background(canvas) {

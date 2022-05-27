@@ -28,12 +28,12 @@ export class Hook extends AcGameObject {
         this.base_moved = 0.009;
         this.moved = 0;
         this.catched = false;  // 是否抓到东西
+        this.catched_money = 0;
         this.money = 0;
         this.is_start = false;
 
+        this.base_scale = this.playground.game_map.game_background.base_scale;
         this.eps = 0.01;
-
-        this.timer = 0;
 
         this.load_image();
         this.add_POS();
@@ -97,15 +97,12 @@ export class Hook extends AcGameObject {
         }
     }
 
+    // 将抓到的价格加入到player的金钱 和 score_number的金钱里面
     add_money() {
-        let miner = this.update_catch();
-        if (miner) {
-            this.score_number.money_number += miner.money;
-            this.player.money += miner.money;
-            this.score_number.render();
-            miner.destroy();
-            console.log("money:", this.score_number.money_number);
-        }
+        this.player.money += this.catched_money;
+        this.score_number.money_number += this.catched_money;
+        this.score_number.render();
+        console.log("add:", this.catched_money, "all:", this.player.money);
     }
 
     catch_miner(miner) {
@@ -140,8 +137,13 @@ export class Hook extends AcGameObject {
             if (this.catched) {
                 let miner = this.update_catch();
                 if (miner) {
-                    miner.is_catched = true;
+                    this.catched_money = miner.money;
+                    this.caught_item = "hook_" + miner.name;
                     this.moved = this.base_moved * ((200 - miner.weight) / 200);
+                    // 抓到矿物之后删除它，然后刷新游戏背景
+                    this.playground.game_map.game_background.render();
+                    miner.is_catched = true;
+                    miner.destroy();
                 }
             } else {
                 this.moved = this.base_moved * 2;  // 钩子收回时速度更快
@@ -154,6 +156,7 @@ export class Hook extends AcGameObject {
             // 如果抓回了东西就计算价值
             if (this.catched) {
                 this.add_money();
+                this.caught_item = "hook";
                 this.catched = false;
             }
         }
@@ -239,24 +242,32 @@ export class Hook extends AcGameObject {
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
-            scale: this.ctx.canvas.height / 920,
+            scale: this.ctx.canvas.height / this.base_scale,
         };
 
-        // 绘制碰撞体积
-        this.ctx.beginPath();
-        this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = "blue";
-        this.ctx.fill();
+        // 绘制钩子的碰撞体积
+        // this.draw_collision_volume(scale);
 
         let icon_pos = this.POS[this.caught_item];
         // this.direction_flag = 3;
 
         // 按照长度绘制绳子
-        let num = Math.ceil(this.tile_length / this.min_tile_length * 20);
-        this.draw_tile(canvas, scale, this.angle + 18 * Math.PI / 180, num);
+        this.draw_tile_use_tile_length(canvas, scale, icon_pos);
+    }
+
+    draw_tile_use_tile_length(canvas, scale, icon_pos) {
+        let num = Math.ceil(this.tile_length / this.min_tile_length * 24.5);
+        this.draw_tile(canvas, scale, this.angle + 17.76 * Math.PI / 180, num);
         // 绘制钩子（抓到东西也用这个函数）
         this.draw_hook_image(canvas, scale, icon_pos);
-        this.timer += 0.2;
+    }
+
+    // 绘制钩子的碰撞体积
+    draw_collision_volume(scale) {
+        this.ctx.beginPath();
+        this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
+        this.ctx.fillStyle = "blue";
+        this.ctx.fill();
     }
 
     draw_tile(canvas, scale, angle, num) {
