@@ -107,8 +107,7 @@ export class ScoreNumber extends AcGameObject {
     draw_numbers(canvas, icon_pos) {
         // 数字槽和图标的距离
         let spacing = 10;
-        for (let i in this.numbers) {
-            let num = this.numbers[i];
+        for (let num of this.numbers) {
             let num_pos = this.POS["digital"][num];
             this.ctx.drawImage(
                 this.topfont, num_pos[0], num_pos[1],
@@ -122,6 +121,7 @@ export class ScoreNumber extends AcGameObject {
         }
     }
 
+    // 将数字拆分成数组
     get_numbers(number) {
         let digits = number.toString().split('');
         this.numbers = digits.map(Number)

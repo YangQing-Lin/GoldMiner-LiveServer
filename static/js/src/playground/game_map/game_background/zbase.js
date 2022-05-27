@@ -36,6 +36,23 @@ export class GameBackground extends AcGameObject {
         this.ctx.canvas.height = this.playground.height;
         this.test_draw_minerable();
         this.render();
+        this.render_player_skill();
+    }
+
+    // 绘制所有和玩家有关的技能图标（必须在背景图片绘制好之后绘制）
+    render_player_skill() {
+        this.render_player_skill_bomb();
+    }
+
+    // 执行绘制玩家旁边的炸弹图标
+    render_player_skill_bomb() {
+        if (this.playground.players) {
+            for (let player of this.playground.players) {
+                if (player.bomb) {
+                    player.bomb.render();
+                }
+            }
+        }
     }
 
     test_draw_minerable() {
