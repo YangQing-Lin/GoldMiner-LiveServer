@@ -32,6 +32,7 @@ export class Hook extends AcGameObject {
         this.money = 0;
         this.is_start = false;
 
+        // 提前定义好的基准值，乘以像素个数来控制图片的大小
         this.base_scale = this.playground.game_map.game_background.base_scale;
         this.eps = 0.01;
 

@@ -1,5 +1,6 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 import { Hook } from "/static/js/src/playground/hook/zbase.js";
+import { Bomb } from "/static/js/src/playground/skill/bomb.js";
 
 export class Player extends AcGameObject {
     constructor(playground, x, y, radius, character, username, photo) {
@@ -13,12 +14,13 @@ export class Player extends AcGameObject {
         this.username = username;
         this.photo = photo;
 
+        this.photo_x = this.x + this.radius * 2;
+        this.photo_y = this.y - this.radius * 0.5;
         this.money = 0;
 
-        if (this.character !== "robot") {
-            this.img = new Image();
-            this.img.src = this.photo;
-        }
+        this.img = new Image();
+        this.img.src = this.photo;
+        this.bomb = new Bomb(this.playground, this);
     }
 
     start() {
@@ -97,20 +99,17 @@ export class Player extends AcGameObject {
     render() {
         let scale = this.playground.scale;
 
-        let photo_x = this.x + this.radius * 2;
-        let photo_y = this.y - this.radius * 0.5;
-
         // 如果是自己就画出头像，如果是敌人就用颜色代替
         if (this.img) {
             this.ctx.save();
             this.ctx.beginPath();
-            this.ctx.arc(photo_x * scale, photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
+            this.ctx.arc(this.photo_x * scale, this.photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
             this.ctx.clip();
-            this.ctx.drawImage(this.img, (photo_x - this.radius) * scale, (photo_y - this.radius) * scale, this.radius * 2 * scale, this.radius * 2 * scale);
+            this.ctx.drawImage(this.img, (this.photo_x - this.radius) * scale, (this.photo_y - this.radius) * scale, this.radius * 2 * scale, this.radius * 2 * scale);
             this.ctx.restore();
         } else {
             this.ctx.beginPath();
-            this.ctx.arc(photo_x * scale, photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
+            this.ctx.arc(this.photo_x * scale, this.photo_y * scale, this.radius * scale, 0, Math.PI * 2, false);
             this.ctx.fillStyle = "white";
             this.ctx.fill();
         }
