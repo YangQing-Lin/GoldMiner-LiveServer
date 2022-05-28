@@ -61,6 +61,7 @@ export class Player extends AcGameObject {
             return false;
         });
 
+
         // 监听鼠标右键点击事件，获取鼠标位置
         // 当前在最上层的canvas是哪个就要把监听事件绑定到哪个canvas上
         this.playground.game_map.$score_number_canvas.mousedown(function (e) {
@@ -83,7 +84,7 @@ export class Player extends AcGameObject {
 
         // 重新绑定监听对象到小窗口
         // 之前的监听对象：$(window).keydown(function (e) {
-        this.playground.game_map.$canvas.keydown(function (e) {
+        this.playground.game_map.$score_number_canvas.keydown(function (e) {
             console.log("key code:", e.which);
 
             if (e.which === 32 || e.which === 40) {  // 空格，出勾
