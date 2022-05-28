@@ -59,7 +59,7 @@ export class ScoreNumber extends AcGameObject {
         this.POS["level"] = [800, 30, 1];
         this.POS["timer"] = [800, 110, 1];
 
-        this.POS["shop_money"] = [630, 30, 0.6];
+        this.POS["shop_money"] = [650, 30, 0.6];
         this.POS["shop_bomb"] = [365, 30, 0.6];
         this.POS["shop_level"] = [100, 30, 0.6];
     }
