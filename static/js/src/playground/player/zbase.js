@@ -118,7 +118,7 @@ export class Player extends AcGameObject {
         // this.hook.direction_flag = 4;  // 定成收回状态（可能不用）（确实不用）
         this.hook.moved = this.hook.base_moved * 2;  // 重置钩子收回速度
 
-        // this.bomb.number -= 1;
+        this.bomb.number -= 1;
         this.game_background.render();  // 减去炸弹数量之后要刷新一次背景图
     }
 

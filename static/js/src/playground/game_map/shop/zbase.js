@@ -35,7 +35,9 @@ export class Shop extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-        this.render();
+        if (this.playground.game_map.character === "shop") {
+            this.render();
+        }
     }
 
     is_all_images_loaded() {

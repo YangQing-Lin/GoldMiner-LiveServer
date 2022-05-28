@@ -10,7 +10,7 @@ export class Bomb {
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
         this.base_scale = this.playground.base_scale;
         // 炸弹的持有数量
-        this.number = 2;
+        this.number = 10;
         this.numbers = [];
 
         this.start();

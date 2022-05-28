@@ -12,6 +12,9 @@
 - 完成了商店的下一关按钮
 - 成功绘制了技能图标的在售和售出样式！
 - 实现了点击购买技能的逻辑和页面展示
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/20220528215608.png)
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/20220528215443.png)
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202205282157627.jpg)
 
 ### 2022-05-27
 
