@@ -93,6 +93,7 @@ export class Shop extends AcGameObject {
         // 五个方块的位置相对整个canvas中心点的偏移量（直接乘长或宽）
         this.POS["shop_item_bg_x"] = [-1.7, -0.5, 0.7, -1.1, 0.1];
         this.POS["shop_item_bg_y"] = [-1, -1, -1, 0.2, 0.2];
+        // 未卖出的五个技能图标在图片中的坐标
         this.POS["shop_skill_item_selling"] = [
             [0, 238, 122, 133],
             [398, 240, 98, 117],
@@ -100,6 +101,7 @@ export class Shop extends AcGameObject {
             [0, 121, 151, 118],
             [293, 127, 159, 111],
         ];
+        // 已经卖出的五个技能图标在图片中的坐标
         this.POS["shop_skill_item_sold"] = [
             [152, 145, 127, 137],
             [281, 238, 115, 136],
@@ -107,10 +109,42 @@ export class Shop extends AcGameObject {
             [292, 0, 145, 129],
             [0, 0, 160, 120],
         ];
+        // 五个售卖窗口的点击判定范围
+        // 分别是：左上x，左上y，右下x，右下y的坐标在整个屏幕上的位置
+        // 以整个canvas高度为单位1
+        this.POS["shop_skill_item_click_position"] = [
+            [0.30, 0.28, 0.51, 0.49],
+            [0.56, 0.28, 0.77, 0.49],
+            [0.82, 0.28, 1.03, 0.49],
+            [0.43, 0.55, 0.64, 0.76],
+            [0.69, 0.55, 0.90, 0.76],
+        ];
 
-        // 标记每个技能是否有售
-        this.shop_skill_si_selling = [true, true, true, true, true];
+        // 每个技能是否有售，控制技能图标的状态，实际游戏中这个函数状态是随机的
+        this.shop_skill_is_selling = [true, true, true, true, true];
+        // 每个技能是否被买了，控制图标背景的状态，每次进商店都是false
+        this.shop_skill_is_sold = [false, false, false, false, false];
 
+    }
+
+    click_skill(tx, ty) {
+        console.log("in click skill", tx, ty);
+        let icon_pos = this.POS["shop_skill_item_click_position"];
+        for (let i = 0; i < 5; i++) {
+            // 判断玩家点击位置是否为某个技能的售卖窗口，且这个技能正在售卖
+            if (
+                tx >= icon_pos[i][0] && ty >= icon_pos[i][1] &&
+                tx <= icon_pos[i][2] && ty <= icon_pos[i][3] &&
+                this.shop_skill_is_selling[i]
+            ) {
+                // 玩家买了一个技能！
+                console.log("player buy a skill:", i);
+                this.shop_skill_is_selling[i] = false;
+                this.shop_skill_is_sold[i] = true;
+                this.resize();
+                break;
+            }
+        }
     }
 
     render() {
@@ -131,54 +165,47 @@ export class Shop extends AcGameObject {
         this.draw_shop_symbols_and_number_slot(canvas, this.POS["money"]);
         this.draw_shop_next(canvas);
         this.draw_shop_skill_sale_icon(canvas);
-        // this.draw_shop_skill_sold_icon(canvas);
     }
 
-    // 绘制已售的技能图标
-    draw_shop_skill_sold_icon(canvas) {
-        // 绘制已经售出的技能图标背景板
-        for (let i = 0; i < 5; i++) {
-            this.draw_shop_skill_sale_item_background(
-                canvas,
-                this.POS["shop_item_bg_sold"],
-                this.POS["shop_item_bg_x"][i],
-                this.POS["shop_item_bg_y"][i]
-            );
-        }
-
-        // 绘制已经卖出的技能图标
-        for (let i = 0; i < 5; i++) {
-            this.draw_shop_skill_sale_item(
-                canvas,
-                this.POS["shop_item_bg_sold"],
-                this.POS["shop_item_bg_x"][i],
-                this.POS["shop_item_bg_y"][i],
-                this.POS["shop_skill_item_sold"][i]
-            );
-        }
-    }
-
-    // 绘制售卖的技能图标
+    // 绘制技能售卖区的售卖状态
     draw_shop_skill_sale_icon(canvas) {
         // 绘制正在售卖的技能图标背景板
         for (let i = 0; i < 5; i++) {
-            this.draw_shop_skill_sale_item_background(
-                canvas,
-                this.POS["shop_item_bg_sale"],
-                this.POS["shop_item_bg_x"][i],
-                this.POS["shop_item_bg_y"][i]
-            );
+            if (this.shop_skill_is_sold[i]) {  // 绘制技能已经售出的背景板
+                this.draw_shop_skill_sale_item_background(
+                    canvas,
+                    this.POS["shop_item_bg_sold"],
+                    this.POS["shop_item_bg_x"][i],
+                    this.POS["shop_item_bg_y"][i]
+                );
+            } else {  // 绘制技能未被售出的背景板
+                this.draw_shop_skill_sale_item_background(
+                    canvas,
+                    this.POS["shop_item_bg_sale"],
+                    this.POS["shop_item_bg_x"][i],
+                    this.POS["shop_item_bg_y"][i]
+                );
+            }
         }
 
-        // 绘制正在售卖的技能图标
         for (let i = 0; i < 5; i++) {
-            this.draw_shop_skill_sale_item(
-                canvas,
-                this.POS["shop_item_bg_sale"],
-                this.POS["shop_item_bg_x"][i],
-                this.POS["shop_item_bg_y"][i],
-                this.POS["shop_skill_item_selling"][i]
-            );
+            if (this.shop_skill_is_selling[i]) {  // 绘制允许购买的技能图标
+                this.draw_shop_skill_sale_item(
+                    canvas,
+                    this.POS["shop_item_bg_sale"],
+                    this.POS["shop_item_bg_x"][i],
+                    this.POS["shop_item_bg_y"][i],
+                    this.POS["shop_skill_item_selling"][i]
+                );
+            } else {  // 绘制不允许购买（或已经购买）的技能图标
+                this.draw_shop_skill_sale_item(
+                    canvas,
+                    this.POS["shop_item_bg_sold"],
+                    this.POS["shop_item_bg_x"][i],
+                    this.POS["shop_item_bg_y"][i],
+                    this.POS["shop_skill_item_sold"][i]
+                );
+            }
         }
     }
 

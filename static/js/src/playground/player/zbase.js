@@ -9,6 +9,7 @@ export class Player extends AcGameObject {
         this.playground = playground;
         this.ctx = this.playground.game_map.ctx;
         this.game_background = this.playground.game_map.game_background;
+        this.shop = this.playground.game_map.shop;  // 载入商店界面对象
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -61,7 +62,8 @@ export class Player extends AcGameObject {
         });
 
         // 监听鼠标右键点击事件，获取鼠标位置
-        this.playground.game_map.$canvas.mousedown(function (e) {
+        // 当前在最上层的canvas是哪个就要把监听事件绑定到哪个canvas上
+        this.playground.game_map.$score_number_canvas.mousedown(function (e) {
             // 项目在acapp的小窗口上运行会有坐标值的不匹配的问题，这里做一下坐标映射
             // 这里canvas前面不能加$，会报错
             const rect = outer.ctx.canvas.getBoundingClientRect();
@@ -71,6 +73,11 @@ export class Player extends AcGameObject {
                 console.log("click right");
             } else if (e.which === 1) {
                 console.log("click left:", tx, ty);
+
+                // 各个页面点击事件计算坐标的路由
+                if (outer.playground.character === "shop") {
+                    outer.shop.click_skill(tx, ty);
+                }
             }
         });
 
@@ -86,7 +93,6 @@ export class Player extends AcGameObject {
                 outer.use_bomb();
                 return false;
             }
-
             return true;
         });
     }
