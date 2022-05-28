@@ -12,9 +12,10 @@ export class Mineral extends AcGameObject {
         this.icon_pos = icon_pos;
         this.money = this.icon_pos[1];
         this.radius = this.icon_pos[3];
+        this.weight = this.icon_pos[4];  // 矿物的质量，最大值：1000  会按比例控制钩子收回速度
+        console.log(this.name, "weight:", this.weight);
 
         // 一些初始变量，后面会更具数据修改
-        this.weight = 1;
         this.is_catched = false;
         if (this.name === "tnt") {
             this.tnt_explode_radius = this.radius * 5;  // tnt爆炸半径
@@ -27,6 +28,7 @@ export class Mineral extends AcGameObject {
     }
 
     start() {
+
     }
 
     update() {
@@ -104,6 +106,7 @@ export class Mineral extends AcGameObject {
             }
         }
 
+        // 统一删除会被炸到的矿物并删除自己
         for (let miner of will_destroy) {
             miner.destroy();
         }
@@ -117,6 +120,7 @@ export class Mineral extends AcGameObject {
         }
     }
 
+    // 检测传入的矿物是否会被当前tnt炸到
     is_will_exploded(miner) {
         let distance = this.get_dist(this.x, this.y, miner.x, miner.y);
         if (distance <= this.tnt_explode_radius + miner.radius) {

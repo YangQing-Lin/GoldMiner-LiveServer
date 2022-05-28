@@ -175,6 +175,8 @@ export class GameBackground extends AcGameObject {
         this.diamond.src = "/static/image/playground/diamond-sheet0.png";
         this.tnt = new Image();
         this.tnt.src = "/static/image/playground/tnt-sheet0.png";
+        this.bag = new Image();
+        this.bag.src = "/static/image/playground/bag-sheet0.png";
 
         this.images = [
             this.groundtile, this.purpletile, this.bgtile1, this.bgtile2,
@@ -182,7 +184,7 @@ export class GameBackground extends AcGameObject {
             this.gamepatch, this.miner_roll_sheet0,
 
             this.gold_1, this.gold_2, this.gold_3, this.gold_4, this.rock_1, this.rock_2,
-            this.bone, this.skull, this.diamond, this.tnt,
+            this.bone, this.skull, this.diamond, this.tnt, this.bag,
         ];
     }
 
@@ -200,21 +202,25 @@ export class GameBackground extends AcGameObject {
         this.POS["gamepatch_tile"] = [56, 0, 14, 64];
 
 
+        // 这里有个很奇怪的现象，如果把下面的"this.base_scale * 920"全部换成"miner_volume_scale"的话就会大大增加随机生成矿物时重合的概率，改回来就又正常了，搞不懂是为什么，难道"this.base_scale"会在使用一次之后改变买嘛？
+        let miner_volume_scale = this.base_scale * 920;
+        this.MINERS = new Array();
         // 0：引用的图片
         // 1：价格
         // 2：旋转角度（一般用不到，后面如果所有矿物都同一个方向觉得单调可以加个随机值）
         // 3：碰撞体积半径
-        this.MINERS = new Array();
-        this.MINERS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014 / this.base_scale * 920];
-        this.MINERS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029 / this.base_scale * 920];
-        this.MINERS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06 / this.base_scale * 920];
-        this.MINERS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076 / this.base_scale * 920];
-        this.MINERS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03 / this.base_scale * 920];
-        this.MINERS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033 / this.base_scale * 920];
-        this.MINERS["bone"] = [this.bone, 7, 0 * rad, 0.024 / this.base_scale * 920];
-        this.MINERS["skull"] = [this.skull, 20, 0 * rad, 0.024 / this.base_scale * 920];
-        this.MINERS["diamond"] = [this.diamond, 500, 0 * rad, 0.016 / this.base_scale * 920];
-        this.MINERS["tnt"] = [this.tnt, 1, 0 * rad, 0.04 / this.base_scale * 920];
+        // 4：矿物质量
+        this.MINERS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014 / this.base_scale * 920, 500];
+        this.MINERS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029 / this.base_scale * 920, 750];
+        this.MINERS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06 / this.base_scale * 920, 800];
+        this.MINERS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076 / this.base_scale * 920, 900];
+        this.MINERS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03 / this.base_scale * 920, 800];
+        this.MINERS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033 / this.base_scale * 920, 940];
+        this.MINERS["bone"] = [this.bone, 7, 0 * rad, 0.024 / this.base_scale * 920, 300];
+        this.MINERS["skull"] = [this.skull, 20, 0 * rad, 0.024 / this.base_scale * 920, 400];
+        this.MINERS["diamond"] = [this.diamond, 500, 0 * rad, 0.016 / this.base_scale * 920, 500];
+        this.MINERS["tnt"] = [this.tnt, 1, 0 * rad, 0.04 / this.base_scale * 920, 1];
+        this.MINERS["bag"] = [this.bag, 114, 0 * rad, 0.032 / this.base_scale * 920, 300]
 
         this.MINERS_NAME = new Array();
         for (let miner in this.MINERS) {

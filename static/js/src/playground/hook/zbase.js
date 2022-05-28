@@ -141,8 +141,9 @@ export class Hook extends AcGameObject {
                     } else {
                         miner.destroy();
                     }
-                    this.moved = this.base_moved * ((200 - miner.weight) / 200);
-                    // 抓到矿物之后删除它，然后刷新游戏背景
+                    // 根据矿物的质量调整收钩速度
+                    this.moved = this.base_moved * ((Math.abs(1000 - miner.weight)) / 1000);
+                    // 抓到矿物之后刷新游戏背景
                     this.playground.game_map.game_background.render();
                 }
             } else {
