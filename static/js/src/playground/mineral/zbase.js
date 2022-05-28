@@ -13,7 +13,6 @@ export class Mineral extends AcGameObject {
         this.money = this.icon_pos[1];
         this.radius = this.icon_pos[3];
         this.weight = this.icon_pos[4];  // 矿物的质量，最大值：1000  会按比例控制钩子收回速度
-        console.log(this.name, "weight:", this.weight);
 
         // 一些初始变量，后面会更具数据修改
         this.is_catched = false;
@@ -22,7 +21,7 @@ export class Mineral extends AcGameObject {
         }
 
         // 用于决定矿物图片大小
-        this.base_scale = this.playground.game_map.game_background.base_scale;
+        this.base_scale = this.playground.base_scale;
 
         this.eps = 0.01;
     }

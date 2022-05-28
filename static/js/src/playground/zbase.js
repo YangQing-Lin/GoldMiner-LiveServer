@@ -7,6 +7,8 @@ export class AcGamePlayground {
         this.root = root;
         this.$playground = $(`<div class="ac-game-playground"></div>`);
         this.operator = "pc"; // pc - phone
+        this.base_scale = 1140;
+        this.character = "shop";  // shop, game, menu
 
         this.hide();
 

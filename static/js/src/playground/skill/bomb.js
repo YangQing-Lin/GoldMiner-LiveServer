@@ -8,7 +8,7 @@ export class Bomb {
         // 是否执行过start函数
         this.is_start = true;
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
-        this.base_scale = this.playground.game_map.game_background.base_scale;
+        this.base_scale = this.playground.base_scale;
         // 炸弹的持有数量
         this.number = 2;
         this.numbers = [];

@@ -13,6 +13,11 @@ export class ScoreNumber extends AcGameObject {
         this.target_number = 456;
         this.level_number = 789;
         this.timer_number = 888;
+
+        this.shop_money_number = 888888888;
+        this.shop_level_number = 123;
+        this.shop_bomb_number = 456;
+
         this.numbers = [];
 
         this.add_POS();
@@ -47,10 +52,16 @@ export class ScoreNumber extends AcGameObject {
             [60, 100, 30, 50],
         ];
 
-        this.POS["money"] = [0, 0, 64, 48, 100, 30, 4];
-        this.POS["target"] = [65, 0, 50, 50, 100, 110, 4];
-        this.POS["level"] = [0, 49, 51, 51, 800, 30, 3];
-        this.POS["timer"] = [52, 50, 46, 55, 800, 110, 3];
+        // 0, 1: 数字横坐标和纵坐标的偏移量
+        // 2: 数字图片的缩放比例
+        this.POS["money"] = [100, 30, 1];
+        this.POS["target"] = [100, 110, 1];
+        this.POS["level"] = [800, 30, 1];
+        this.POS["timer"] = [800, 110, 1];
+
+        this.POS["shop_money"] = [630, 30, 0.6];
+        this.POS["shop_bomb"] = [365, 30, 0.6];
+        this.POS["shop_level"] = [100, 30, 0.6];
     }
 
     load_image() {
@@ -94,6 +105,25 @@ export class ScoreNumber extends AcGameObject {
 
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (this.playground.character === "game") {
+            this.render_game_score_number(canvas);
+        } else if (this.playground.character === "shop") {
+            this.render_shop_score_number(canvas);
+        }
+    }
+
+    // 绘制商店界面的数字
+    render_shop_score_number(canvas) {
+        this.get_numbers(this.shop_money_number);
+        this.draw_numbers(canvas, this.POS["shop_money"]);
+        this.get_numbers(this.shop_bomb_number);
+        this.draw_numbers(canvas, this.POS["shop_bomb"]);
+        this.get_numbers(this.shop_level_number);
+        this.draw_numbers(canvas, this.POS["shop_level"]);
+    }
+
+    // 绘制游戏界面中的数字
+    render_game_score_number(canvas) {
         this.get_numbers(this.money_number);
         this.draw_numbers(canvas, this.POS["money"]);
         this.get_numbers(this.target_number);
@@ -112,10 +142,10 @@ export class ScoreNumber extends AcGameObject {
             this.ctx.drawImage(
                 this.topfont, num_pos[0], num_pos[1],
                 num_pos[2], num_pos[3],
-                canvas.scale * icon_pos[4] + canvas.scale * (spacing + 12),
-                canvas.scale * (icon_pos[5] + 3),
-                num_pos[2] * canvas.scale,
-                num_pos[3] * canvas.scale
+                canvas.scale * icon_pos[2] * (icon_pos[0] + spacing + 12),
+                canvas.scale * icon_pos[2] * (icon_pos[1] + 3),
+                canvas.scale * icon_pos[2] * num_pos[2],
+                canvas.scale * icon_pos[2] * num_pos[3]
             );
             spacing += num_pos[2];
         }

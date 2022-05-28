@@ -2,16 +2,15 @@ import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js
 import { Mineral } from "/static/js/src/playground/mineral/zbase.js";
 
 export class GameBackground extends AcGameObject {
-    constructor(root, playground, game_background_ctx) {
+    constructor(playground, game_background_ctx) {
         super();
-        this.root = root;
         this.playground = playground;
         this.ctx = game_background_ctx;
         this.is_start = false;
         this.time = 0;
 
         this.eps = 0.01;
-        this.base_scale = 1140;  // 和矿物像素绑定的基准，用于放大和缩小矿物
+        this.base_scale = this.playground.base_scale;  // 和矿物像素绑定的基准，用于放大和缩小矿物
 
         this.load_image();
         this.add_POS();
@@ -27,10 +26,6 @@ export class GameBackground extends AcGameObject {
         }
     }
 
-    late_start() {
-
-    }
-
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
@@ -38,6 +33,7 @@ export class GameBackground extends AcGameObject {
         this.render();
     }
 
+    // 随机绘制10个矿物
     test_draw_minerable() {
         if (!this.playground.players || this.playground.players.length === 0) {
             return false;
@@ -326,6 +322,7 @@ export class GameBackground extends AcGameObject {
     draw_scoreboard_background_number_slot(canvas, number, icon_pos) {
         // 数字槽和图标的距离
         let spacing = 10;
+
         // 绘制数字槽的头部
         let patch_head = this.POS["gamepatch_head"];
         this.ctx.drawImage(

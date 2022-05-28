@@ -9,7 +9,7 @@ export class Explode extends AcGameObject {
         this.position_y = position_y;
 
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
-        this.base_scale = this.playground.game_map.game_background.base_scale;
+        this.base_scale = this.playground.base_scale;
         this.interval_time = 80;  // 两帧之间的时间间隔（ms）
         this.times = 0;  // 开始计算开始播放图片的总时间
         this.is_start = false;
