@@ -35,12 +35,12 @@ export class Hook extends AcGameObject {
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
         this.base_scale = this.playground.game_map.game_background.base_scale;
         this.eps = 0.01;
-
-        this.load_image();
-        this.add_POS();
     }
 
     start() {
+        this.load_image();
+        this.add_POS();
+
         // 给所有的图片的加载事件绑定一个变量，用于所有图片加载好后直接执行render函数
         // 因为render可能会执行很多次（改变窗口大小），所以不能把绘制图片代码放到onload里面
         for (let img of this.images) {
@@ -91,7 +91,6 @@ export class Hook extends AcGameObject {
         for (let i = 0; i < this.playground.miners.length; i++) {
             let miner = this.playground.miners[i];
             if (this.is_collision(miner)) {
-                this.catch_miner(miner);
                 this.catched = true;
                 return miner;
             }
@@ -104,11 +103,6 @@ export class Hook extends AcGameObject {
         this.score_number.money_number += this.catched_money;
         this.score_number.render();
         console.log("add:", this.catched_money, "all:", this.player.money);
-    }
-
-    catch_miner(miner) {
-        miner.x = this.x;
-        miner.y = this.y;
     }
 
     get_dist(x1, y1, x2, y2) {

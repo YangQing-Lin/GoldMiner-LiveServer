@@ -50,7 +50,6 @@ export class Bomb {
         let rad = Math.PI / 180;
 
         this.POS = new Array();
-        this.POS["bombsprite_sheet0"] = [this.bombsprite_sheet0];
         // 0~9  10:"$"
         this.POS["digital"] = [
             [0, 0, 30, 50],
@@ -105,8 +104,7 @@ export class Bomb {
 
     // 绘制玩家旁边的炸弹图标
     render_bombs_prite(scale, canvas) {
-        let icon_pos = this.POS["bombsprite_sheet0"];
-        let img = icon_pos[0];
+        let img = this.bombsprite_sheet0;
         this.x = this.player.photo_x * scale + img.width * 0.1 * canvas.scale;
         this.y = this.player.photo_y * scale - img.height * 0.6 * canvas.scale;
 

@@ -1,6 +1,7 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 import { Hook } from "/static/js/src/playground/hook/zbase.js";
 import { Bomb } from "/static/js/src/playground/skill/bomb.js";
+import { Explode } from "/static/js/src/playground/skill/explode.js";
 
 export class Player extends AcGameObject {
     constructor(playground, x, y, radius, character, username, photo) {
@@ -78,7 +79,7 @@ export class Player extends AcGameObject {
         this.playground.game_map.$canvas.keydown(function (e) {
             console.log("key code:", e.which);
 
-            if (e.which === 32) {  // 空格，出勾
+            if (e.which === 32 || e.which === 40) {  // 空格，出勾
                 outer.hook.tick();
                 return false;
             } else if (e.which === 38) {  // ↑，放炸弹
@@ -95,12 +96,23 @@ export class Player extends AcGameObject {
             return false;
         }
 
+        // 重置钩子状态、刷新炸弹个数、刷新背景图
+        this.reset_hook_bomb_background();
+        // 绘制炸弹爆炸动图
+        this.draw_bomb_explode_gif();
+    }
+
+    draw_bomb_explode_gif() {
+        new Explode(this.playground, this.hook.x, this.hook.y, "bomb");
+    }
+
+    reset_hook_bomb_background() {
         this.hook.caught_item = "hook";  // 重置钩子图标
         this.hook.catched = false;  // 没抓到东西
         // this.hook.direction_flag = 4;  // 定成收回状态（可能不用）（确实不用）
         this.hook.moved = this.hook.base_moved * 2;  // 重置钩子收回速度
 
-        this.bomb.number -= 1;
+        // this.bomb.number -= 1;
         this.game_background.render();  // 减去炸弹数量之后要刷新一次背景图
     }
 

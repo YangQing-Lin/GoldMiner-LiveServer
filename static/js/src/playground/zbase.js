@@ -97,7 +97,7 @@ export class AcGamePlayground {
         this.miners = [];
 
         // 绘制玩家
-        this.players.push(new Player(this, this.width / 2 / this.scale, 4.3 / 16, 0.04, "me", "test", "/static/image/icon/head.jpg"));
+        this.players.push(new Player(this, this.width / 2 / this.scale, 4.3 / 16, 0.04, "me", "test", "https://cdn.acwing.com/media/user/profile/photo/84494_lg_29c89a778e.jpg"));
     }
 
     hide() {  // 关闭playground界面
