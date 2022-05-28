@@ -1,116 +1,43 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
+import { Explode } from "/static/js/src/playground/skill/explode.js";
 
 export class Mineral extends AcGameObject {
-    constructor(playground, x, y, name) {
+    constructor(playground, x, y, name, icon_pos) {
         super();
         this.playground = playground;
         this.ctx = this.playground.game_map.game_background.ctx;
         this.x = x;
         this.y = y;
         this.name = name;
+        this.icon_pos = icon_pos;
+        this.money = this.icon_pos[1];
+        this.radius = this.icon_pos[3];
 
         // 一些初始变量，后面会更具数据修改
-        this.radius = 0.03;
-        this.money = 1;
         this.weight = 1;
-        this.is_start = false;
         this.is_catched = false;
+        if (this.name === "tnt") {
+            this.tnt_explode_radius = this.radius * 5;  // tnt爆炸半径
+        }
 
         // 用于决定矿物图片大小
         this.base_scale = this.playground.game_map.game_background.base_scale;
 
         this.eps = 0.01;
-
-        this.load_image();
-        this.add_POS();
     }
 
     start() {
-        // 给所有的图片的加载事件绑定一个变量，用于所有图片加载好后直接执行render函数
-        // 因为render可能会执行很多次（改变窗口大小），所以不能把绘制图片代码放到onload里面
-        for (let img of this.images) {
-            img.onload = function () {
-                img.is_load = true;
-            }
-        }
     }
 
     update() {
-        // 图片都加载好之后执行一次render（不需要执行了，现在game_background加载好后会绘制一次所有的矿物）
-        // if (!this.is_start && this.is_all_images_loaded()) {
-        //     this.is_start = true;
-        //     this.render();
-        // }
-    }
-
-    late_update() {
 
     }
 
-    is_all_images_loaded() {
-        for (let img of this.images) {
-            if (!img.is_load) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    render() {
+    // 绘制tnt的爆炸范围和矿物的碰撞体积
+    early_render() {
         let scale = this.playground.scale;
-
-        this.ctx.beginPath();
-        this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = this.color;
-        this.ctx.fill();
-    }
-
-    load_image() {
-        this.gold_1 = new Image();
-        this.gold_1.src = "/static/image/playground/g1-sheet0.png";
-        this.gold_2 = new Image();
-        this.gold_2.src = "/static/image/playground/g2-sheet0.png";
-        this.gold_3 = new Image();
-        this.gold_3.src = "/static/image/playground/g3-sheet0.png";
-        this.gold_4 = new Image();
-        this.gold_4.src = "/static/image/playground/g4-sheet0.png";
-        this.rock_1 = new Image();
-        this.rock_1.src = "/static/image/playground/r1-sheet0.png";
-        this.rock_2 = new Image();
-        this.rock_2.src = "/static/image/playground/r2-sheet0.png";
-        this.bone = new Image();
-        this.bone.src = "/static/image/playground/bone-sheet0.png";
-        this.skull = new Image();
-        this.skull.src = "/static/image/playground/skull-sheet0.png";
-        this.diamond = new Image();
-        this.diamond.src = "/static/image/playground/diamond-sheet0.png";
-
-        this.images = [
-            this.gold_1, this.gold_2, this.gold_3, this.gold_4, this.rock_1, this.rock_2,
-            this.bone, this.skull, this.diamond,
-        ];
-    }
-
-    add_POS() {
-        let rad = Math.PI / 180;
-
-        this.MINERS = new Array();
-        // 1：引用的图片
-        // 2：价格
-        // 3：旋转角度（一般用不到，后面如果所有矿物都同一个方向觉得单调可以加个随机值）
-        // 4：碰撞体积半径
-        this.MINERS["gold_1"] = [this.gold_1, 30, 0 * rad, 0.014 / this.base_scale * 920];
-        this.MINERS["gold_2"] = [this.gold_2, 100, 0 * rad, 0.029 / this.base_scale * 920];
-        this.MINERS["gold_3"] = [this.gold_3, 250, 0 * rad, 0.06 / this.base_scale * 920];
-        this.MINERS["gold_4"] = [this.gold_4, 500, 0 * rad, 0.076 / this.base_scale * 920];
-        this.MINERS["rock_1"] = [this.rock_1, 11, 0 * rad, 0.03 / this.base_scale * 920];
-        this.MINERS["rock_2"] = [this.rock_2, 20, 0 * rad, 0.033 / this.base_scale * 920];
-        this.MINERS["bone"] = [this.bone, 7, 0 * rad, 0.024 / this.base_scale * 920];
-        this.MINERS["skull"] = [this.skull, 20, 0 * rad, 0.024 / this.base_scale * 920];
-        this.MINERS["diamond"] = [this.diamond, 500, 0 * rad, 0.016 / this.base_scale * 920];
-
-        // 取出选择的矿物信息
-        this.money = this.MINERS[this.name][1];
+        // 绘制碰撞体积
+        this.draw_collision_volume(scale);
     }
 
     render() {
@@ -121,28 +48,33 @@ export class Mineral extends AcGameObject {
             scale: this.ctx.canvas.height / this.base_scale,
         };
 
-        let icon_pos = this.MINERS[this.name];
-        // 绘制碰撞体积
-        // this.draw_collision_volume(scale, icon_pos);
         // 绘制图片
-        this.draw_mineral_img(canvas, scale, icon_pos);
+        this.draw_mineral_img(canvas, scale);
     }
 
     // 绘制矿物的碰撞体积
-    draw_collision_volume(scale, icon_pos) {
+    draw_collision_volume(scale) {
+        // 画出tnt的爆炸范围
+        if (this.name === "tnt") {
+            this.ctx.beginPath();
+            this.ctx.arc(this.x * scale, this.y * scale, this.tnt_explode_radius * scale, 0, Math.PI * 2, false);
+            this.ctx.fillStyle = "blue";
+            this.ctx.fill();
+        }
+
         this.ctx.beginPath();
-        this.ctx.arc(this.x * scale, this.y * scale, icon_pos[3] * scale, 0, Math.PI * 2, false);
+        this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
         this.ctx.fillStyle = "red";
         this.ctx.fill();
     }
 
     // 绘制矿物的图片
-    draw_mineral_img(canvas, scale, icon_pos) {
-        let img = icon_pos[0];
+    draw_mineral_img(canvas, scale) {
+        let img = this.icon_pos[0];
         this.ctx.save();
         // 这里的位置是以canvas高度为单位1的，所以不用像绘制碰撞体积那样 * scale
         this.ctx.translate(this.x, this.y);
-        this.ctx.rotate(-icon_pos[2]);
+        this.ctx.rotate(-this.icon_pos[2]);
         this.ctx.drawImage(
             img, 0, 0, img.width, img.height,
             this.x * scale - img.width / 2 * canvas.scale,
@@ -151,6 +83,47 @@ export class Mineral extends AcGameObject {
             img.height * canvas.scale
         );
         this.ctx.restore();
+    }
+
+    // 当矿物tnt被抓到时删除一定范围内的其他矿物，最后删除自己，并且引爆范围内的其他tnt
+    // 这个函数第一层只会在hook里调用
+    explode_tnt() {
+        // 绘制爆炸gif
+        new Explode(this.playground, this.x, this.y);
+
+        let tnts = [];  // 需要递归调用的tnt
+        for (let miner of this.playground.miners) {
+            if (miner.name === "tnt") {
+                if (miner !== this && this.is_will_exploded(miner)) {
+                    tnts.push(miner);
+                }
+                continue;
+            } else if (this.is_will_exploded(miner)) {
+                miner.destroy();
+            }
+        }
+        this.destroy();
+
+        // 引爆范围内的其他tnt
+        for (let tnt of tnts) {
+            if (tnt) {
+                tnt.explode_tnt();
+            }
+        }
+    }
+
+    get_dist(x1, y1, x2, y2) {
+        let dx = x1 - x2;
+        let dy = y1 - y2;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    is_will_exploded(miner) {
+        let distance = this.get_dist(this.x, this.y, miner.x, miner.y);
+        if (distance < this.tnt_explode_radius + miner.radius) {
+            return true;
+        }
+        return false;
     }
 
     on_destroy() {

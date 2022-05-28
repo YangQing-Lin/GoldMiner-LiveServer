@@ -1,20 +1,18 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 
 export class Explode extends AcGameObject {
-    constructor(playground, hook_x, hook_y, explode_name) {
+    constructor(playground, position_x, position_y) {
         super();
         this.playground = playground;
         this.ctx = this.playground.game_map.ctx;
-        this.hook_x = hook_x;
-        this.hook_y = hook_y;
-        this.explode_name = explode_name;  // "bomb"：炸弹爆炸图标 "tnt"：tnt爆炸图标
+        this.position_x = position_x;
+        this.position_y = position_y;
 
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
         this.base_scale = this.playground.game_map.game_background.base_scale;
-        this.interval_time = 100;  // 两帧之间的时间间隔（ms）
+        this.interval_time = 80;  // 两帧之间的时间间隔（ms）
         this.times = 0;  // 开始计算开始播放图片的总时间
         this.is_start = false;
-        this.is_set_position = false;  // 位置只要计算一次
     }
 
     start() {
@@ -33,21 +31,23 @@ export class Explode extends AcGameObject {
     render() {
         this.times += this.timedelta;
 
-        if (this.explode_name === "bomb") {
-            this.render_bomb_explode();
-        }
+        this.render_explode();
     }
 
     // 绘制炸弹爆炸图像
-    render_bomb_explode() {
-        let frame_number = 4;  // 炸弹爆炸gif的帧数
+    render_explode() {
+        let frame_number = 6;  // 炸弹爆炸gif的帧数
         let frame_cnt = Math.floor(this.times / this.interval_time + 1);  // 计算现在播放到第几帧（第一帧this.times = 0）
         if (frame_cnt > frame_number) {  // 超过了最大帧数动画就播放完了，直接删除对象
             this.destroy();
             return false;
         }
-        let img_pos_name = "bomb_explode_" + String(frame_cnt);  // 按照当前帧数获取相应的图片位置
-        let img = this.bomb_explode;
+        let img_pos_name = "explode_" + String(frame_cnt);  // 按照当前帧数获取相应的图片位置
+        // 第一帧和第三帧用的是另一张图片
+        let img = this.explode_1;
+        if (frame_cnt === 1 || frame_cnt === 3) {
+            img = this.explode_2;
+        }
         let img_pos = this.POS[img_pos_name];
 
         let scale = this.playground.scale;
@@ -56,11 +56,8 @@ export class Explode extends AcGameObject {
             height: this.ctx.canvas.height,
             scale: this.ctx.canvas.height / this.base_scale,
         };
-        if (!this.is_set_position) {
-            this.x = this.hook_x * scale - img_pos[2] * 0.5 * canvas.scale;
-            this.y = this.hook_y * scale - img_pos[3] * 0.5 * canvas.scale;
-            this.is_set_position = true;
-        }
+        this.x = this.position_x * scale - img_pos[2] * 0.5 * canvas.scale;
+        this.y = this.position_y * scale - img_pos[3] * 0.5 * canvas.scale;
 
         // 这里的位置是以canvas高度为单位1的，所以不用像绘制碰撞体积那样 * scale
         this.ctx.drawImage(
@@ -91,11 +88,13 @@ export class Explode extends AcGameObject {
     }
 
     load_image() {
-        this.bomb_explode = new Image();
-        this.bomb_explode.src = "/static/image/playground/expoanimation-sheet0.png";
+        this.explode_1 = new Image();
+        this.explode_1.src = "/static/image/playground/expoanimation-sheet0.png";
+        this.explode_2 = new Image();
+        this.explode_2.src = "/static/image/playground/expoanimation-sheet1.png";
 
         this.images = [
-            this.bomb_explode,
+            this.explode_1, this.explode_2
         ];
     }
 
@@ -103,10 +102,13 @@ export class Explode extends AcGameObject {
         let rad = Math.PI / 180;
 
         this.POS = new Array();
-        this.POS["bomb_explode_1"] = [264, 240, 209, 190];
-        this.POS["bomb_explode_2"] = [0, 0, 271, 265];
-        this.POS["bomb_explode_3"] = [269, 0, 243, 240];
-        this.POS["bomb_explode_4"] = [0, 265, 246, 246];
+        this.POS["explode_2"] = [264, 240, 209, 190];
+        this.POS["explode_4"] = [0, 0, 271, 265];
+        this.POS["explode_5"] = [269, 0, 243, 240];
+        this.POS["explode_6"] = [0, 265, 246, 246];
+
+        this.POS["explode_1"] = [192, 0, 162, 162];
+        this.POS["explode_3"] = [0, 0, 190, 190];
     }
 }
 

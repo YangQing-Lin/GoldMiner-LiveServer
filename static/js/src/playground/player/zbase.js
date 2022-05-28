@@ -99,11 +99,11 @@ export class Player extends AcGameObject {
         // 重置钩子状态、刷新炸弹个数、刷新背景图
         this.reset_hook_bomb_background();
         // 绘制炸弹爆炸动图
-        this.draw_bomb_explode_gif();
+        this.draw_explode_gif();
     }
 
-    draw_bomb_explode_gif() {
-        new Explode(this.playground, this.hook.x, this.hook.y, "bomb");
+    draw_explode_gif() {
+        new Explode(this.playground, this.hook.x, this.hook.y);
     }
 
     reset_hook_bomb_background() {

@@ -1,4 +1,3 @@
-// import { AcGameObject } from "../ac_game_objects/zbase";
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 
 export class Hook extends AcGameObject {
@@ -134,11 +133,17 @@ export class Hook extends AcGameObject {
                 if (miner) {
                     this.catched_money = miner.money;
                     this.caught_item = "hook_" + miner.name;
+                    miner.is_catched = true;
+                    if (miner.name === "tnt") {  // 如果抓到了tnt要进行一个特判
+                        this.caught_item = "hook_tnt_fragment";
+                        // TODO 加入TNT爆炸动画和消除一定范围内的矿物
+                        miner.explode_tnt();
+                    } else {
+                        miner.destroy();
+                    }
                     this.moved = this.base_moved * ((200 - miner.weight) / 200);
                     // 抓到矿物之后删除它，然后刷新游戏背景
                     this.playground.game_map.game_background.render();
-                    miner.is_catched = true;
-                    miner.destroy();
                 }
             } else {
                 this.moved = this.base_moved * 2;  // 钩子收回时速度更快
