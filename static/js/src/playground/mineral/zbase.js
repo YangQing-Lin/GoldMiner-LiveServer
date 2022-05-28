@@ -37,7 +37,7 @@ export class Mineral extends AcGameObject {
     early_render() {
         let scale = this.playground.scale;
         // 绘制碰撞体积
-        this.draw_collision_volume(scale);
+        // this.draw_collision_volume(scale);
     }
 
     render() {
@@ -92,6 +92,7 @@ export class Mineral extends AcGameObject {
         new Explode(this.playground, this.x, this.y);
 
         let tnts = [];  // 需要递归调用的tnt
+        let will_destroy = [];  // 需要统一删除的矿物
         for (let miner of this.playground.miners) {
             if (miner.name === "tnt") {
                 if (miner !== this && this.is_will_exploded(miner)) {
@@ -99,8 +100,12 @@ export class Mineral extends AcGameObject {
                 }
                 continue;
             } else if (this.is_will_exploded(miner)) {
-                miner.destroy();
+                will_destroy.push(miner);
             }
+        }
+
+        for (let miner of will_destroy) {
+            miner.destroy();
         }
         this.destroy();
 
@@ -112,18 +117,18 @@ export class Mineral extends AcGameObject {
         }
     }
 
+    is_will_exploded(miner) {
+        let distance = this.get_dist(this.x, this.y, miner.x, miner.y);
+        if (distance <= this.tnt_explode_radius + miner.radius) {
+            return true;
+        }
+        return false;
+    }
+
     get_dist(x1, y1, x2, y2) {
         let dx = x1 - x2;
         let dy = y1 - y2;
         return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    is_will_exploded(miner) {
-        let distance = this.get_dist(this.x, this.y, miner.x, miner.y);
-        if (distance < this.tnt_explode_radius + miner.radius) {
-            return true;
-        }
-        return false;
     }
 
     on_destroy() {
