@@ -102,6 +102,15 @@ export class ScoreNumber extends AcGameObject {
         this.ctx.canvas.height = this.playground.height;
     }
 
+    // 玩家买了一个技能之后会触发的函数
+    // 用于重新计算剩余金钱
+    player_buy_skill(skill_number) {
+        let shop = this.playground.game_map.shop;
+        let skill_price = shop.shop_skill_price;  // 技能价格
+        this.shop_money_number -= skill_price[skill_number];
+        this.render();
+    }
+
     render() {
         this.resize();
         let canvas = {

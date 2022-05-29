@@ -19,17 +19,16 @@ export class Player extends AcGameObject {
 
         this.photo_x = this.x + this.radius * 2;
         this.photo_y = this.y - this.radius * 0.5;
-        this.money = 0;
+        this.money = 10000;
 
         this.img = new Image();
         this.img.src = this.photo;
         this.bomb = new Bomb(this.playground, this);
+        this.hook = new Hook(this.playground, this, this.playground.game_map.score_number);
     }
 
     start() {
         this.add_listening_events();
-
-        this.hook = new Hook(this.playground, this, this.playground.game_map.score_number);
     }
 
     create_uuid() {

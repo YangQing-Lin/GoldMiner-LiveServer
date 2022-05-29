@@ -58,9 +58,10 @@ export class GameMap extends AcGameObject {
 
     start_new_level() {
         this.time_left = 3000;
-        // this.playground.character = "game";
+        this.playground.character = "game";
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
         this.score_number.render();
+        this.game_background.render();
     }
 
     add_listening_events() {
@@ -80,7 +81,7 @@ export class GameMap extends AcGameObject {
         this.ctx.fillStyle = "rgba(0, 0, 0, 1)";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        // 因为下面的对象都不是一秒更新60次的，所以直接调用render函数，里面会自动resize
+        // 因为下面的对象都不是一秒更新60次的，所以直接调用render函数，render里面会自动resize
         if (this.game_background) this.game_background.render();
         if (this.score_number) this.score_number.render();
     }
@@ -111,6 +112,7 @@ export class GameMap extends AcGameObject {
             this.time_left = 0;
             this.playground.character = "shop";
             this.shop.start();
+            // TODO
             this.score_number.render();
         }
     }

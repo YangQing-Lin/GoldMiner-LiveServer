@@ -62,10 +62,10 @@ export class GameBackground extends AcGameObject {
     }
 
     update() {
-        // 图片都加载好之后执行一次resize
+        // 图片都加载好之后执行一次render
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
-            this.resize();
+            this.render();
         }
     }
 

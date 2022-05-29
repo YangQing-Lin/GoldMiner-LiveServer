@@ -26,7 +26,7 @@ export class Shop extends AcGameObject {
         // 随机售卖技能
         for (let i = 0; i < this.shop_skill_is_selling.length; i++) {
             let random = Math.random();
-            // this.shop_skill_is_selling[i] = random <= 0.6;  // 售卖概率60%
+            this.shop_skill_is_selling[i] = random <= 0.6;  // 售卖概率60%
         }
         // 初始化售卖背景标记数组
         this.shop_skill_is_sold = [false, false, false, false, false];
@@ -162,6 +162,7 @@ export class Shop extends AcGameObject {
                     console.log("player buy skill:", i);
                     this.shop_skill_is_selling[i] = false;
                     this.shop_skill_is_sold[i] = true;
+                    this.playground.game_map.score_number.player_buy_skill(i);
                     this.render();  // 刷新商店canvas
                 }
                 break;
