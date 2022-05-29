@@ -56,10 +56,12 @@ export class GameMap extends AcGameObject {
         this.start_new_level();
     }
 
+    // 开始新一关的游戏界面，game_map创建的时候会调用一次，玩家在商店界面点击下一关也会调用一次
     start_new_level() {
         this.playground.character = "game";
-        this.time_left = 3000;  // 设定新一局游戏的时长
+        this.time_left = 10000;  // 设定新一局游戏的时长
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
+        // 调用score_number的新一关，游戏开局的初始数据都存在score_number里面
         this.score_number.start_new_level();
         this.game_background.render();
     }

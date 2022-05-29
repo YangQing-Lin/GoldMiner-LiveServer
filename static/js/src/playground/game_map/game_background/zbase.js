@@ -24,11 +24,69 @@ export class GameBackground extends AcGameObject {
                 img.is_load = true;
             }
         }
+
+        this.start_new_level();
+    }
+
+    start_new_level() {
+        for (let miner of this.playground.miners) {
+            miner.destroy();
+        }
+        // 生成矿物
+        this.test_draw_minerable();
+        this.render();
     }
 
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
+    }
+
+    // 随机绘制10个矿物
+    test_draw_minerable() {
+        if (!this.playground.players || this.playground.players.length === 0) {
+            return false;
+        }
+
+        // 获得玩家、可生成的最大长度、可生成的最小长度、可生成的最大角度
+        let player = this.playground.players[0];
+        let max_length = player.hook.max_tile_length * 0.8;
+        let min_length = player.hook.min_tile_length * 2;
+        let max_angle = player.hook.max_angle * 0.9;
+
+        let random_times = 0;  // 随机循环执行了多少次
+        let mineral_name = "gold_1";  // 选择的矿物名称（之后会随机一个）
+
+        for (let i = 0; i < 10; i++) {
+            // 初始化变量
+            let random_length = 0,
+                random_angle = 0,
+                random_x = 0,
+                random_y = 0;
+
+            // 循环判断随机生成的是否合法，角度也要重新生成，因为可能一排都占满了
+            // 第一次循环一定不会成功
+            while (!this.is_create_collision(random_x, random_y, random_length, min_length, mineral_name)) {
+                // 随机选择一个矿物
+                mineral_name = this.MINERS_NAME[Math.floor(Math.random() * this.MINERS_NAME.length)];
+                random_length = Math.random() * max_length;
+                // 用长度和角度计算随机的位置，方便判断是否和已经生成的矿物位置重合
+                random_angle = Math.random() * max_angle * 2 - max_angle;
+                random_x = player.x + Math.sin(random_angle) * random_length;
+                random_y = player.y + Math.cos(random_angle) * random_length;
+
+                random_times += 1;
+                if (random_times >= 10000) {
+                    console.log("ERROR: too many random!!!");
+                    break;
+                }
+            }
+
+            // 生成随机定点的矿物
+            this.playground.miners.push(new Mineral(this.playground, random_x, random_y, mineral_name, this.MINERS[mineral_name]));
+        }
+
+        console.log("random times:", random_times);
     }
 
     // 传入：随机位置、随机角度、确定的最小长度、随机的矿物名称
@@ -175,58 +233,8 @@ export class GameBackground extends AcGameObject {
         }
     }
 
-
-
-    // 随机绘制10个矿物
-    test_draw_minerable() {
-        if (!this.playground.players || this.playground.players.length === 0) {
-            return false;
-        }
-
-        // 获得玩家、可生成的最大长度、可生成的最小长度、可生成的最大角度
-        let player = this.playground.players[0];
-        let max_length = player.hook.max_tile_length * 0.8;
-        let min_length = player.hook.min_tile_length * 2;
-        let max_angle = player.hook.max_angle * 0.9;
-
-        let random_times = 0;  // 随机循环执行了多少次
-        let mineral_name = "gold_1";  // 选择的矿物名称（之后会随机一个）
-
-        for (let i = 0; i < 10; i++) {
-            // 初始化变量
-            let random_length = 0,
-                random_angle = 0,
-                random_x = 0,
-                random_y = 0;
-
-            // 循环判断随机生成的是否合法，角度也要重新生成，因为可能一排都占满了
-            // 第一次循环一定不会成功
-            while (!this.is_create_collision(random_x, random_y, random_length, min_length, mineral_name)) {
-                // 随机选择一个矿物
-                mineral_name = this.MINERS_NAME[Math.floor(Math.random() * this.MINERS_NAME.length)];
-                random_length = Math.random() * max_length;
-                // 用长度和角度计算随机的位置，方便判断是否和已经生成的矿物位置重合
-                random_angle = Math.random() * max_angle * 2 - max_angle;
-                random_x = player.x + Math.sin(random_angle) * random_length;
-                random_y = player.y + Math.cos(random_angle) * random_length;
-
-                random_times += 1;
-                if (random_times >= 10000) {
-                    console.log("ERROR: too many random!!!");
-                    break;
-                }
-            }
-
-            // 生成随机定点的矿物
-            this.playground.miners.push(new Mineral(this.playground, random_x, random_y, mineral_name, this.MINERS[mineral_name]));
-        }
-
-        console.log("random times:", random_times);
-    }
-
     render() {
         this.resize();
-        this.test_draw_minerable();
 
         // 先清空屏幕
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

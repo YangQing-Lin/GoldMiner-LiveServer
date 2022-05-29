@@ -157,6 +157,7 @@ export class Shop extends AcGameObject {
                     // 玩家点了下一关！
                     console.log("player click next!!!");
                     this.playground.game_map.start_new_level();
+                    this.playground.game_map.game_background.start_new_level();
                     this.render();  // 刷新商店canvas
                 } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
                     // 玩家买了一个技能！

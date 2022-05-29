@@ -9,7 +9,7 @@ export class ScoreNumber extends AcGameObject {
         this.time = 0;
         this.images = [];
 
-        this.money_number = 0;
+        this.shop_money_number = 0;
         this.target_number = 456;
         this.level_number = 0;
         this.time_left = 60;
@@ -35,7 +35,6 @@ export class ScoreNumber extends AcGameObject {
 
     // 开始新的一局时会在game_map.start_new_level()函数里面触发
     start_new_level() {
-        this.money_number = this.shop_money_number;
         this.level_number += 1;
         this.render();
     }
@@ -161,7 +160,7 @@ export class ScoreNumber extends AcGameObject {
 
     // 绘制游戏界面中的数字
     render_game_score_number(canvas) {
-        this.get_numbers(this.money_number);
+        this.get_numbers(this.shop_money_number);
         this.draw_numbers(canvas, this.POS["money"], 10);
         this.get_numbers(this.target_number);
         this.draw_numbers(canvas, this.POS["target"], 10);
