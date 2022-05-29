@@ -11,11 +11,10 @@ export class ScoreNumber extends AcGameObject {
 
         this.money_number = 0;
         this.target_number = 456;
-        this.level_number = 789;
+        this.level_number = 0;
         this.time_left = 60;
 
-        this.shop_money_number = 888888888;
-        this.shop_level_number = 123;
+        this.shop_money_number = 88888;
         this.shop_bomb_number = 456;
 
         this.numbers = [];
@@ -32,6 +31,13 @@ export class ScoreNumber extends AcGameObject {
                 img.is_load = true;
             }
         }
+    }
+
+    // 开始新的一局时会在game_map.start_new_level()函数里面触发
+    start_new_level() {
+        this.money_number = this.shop_money_number;
+        this.level_number += 1;
+        this.render();
     }
 
     add_POS() {
@@ -134,7 +140,7 @@ export class ScoreNumber extends AcGameObject {
         this.draw_numbers(canvas, this.POS["shop_money"], 10);
         this.get_numbers(this.shop_bomb_number);
         this.draw_numbers(canvas, this.POS["shop_bomb"], 10);
-        this.get_numbers(this.shop_level_number);
+        this.get_numbers(this.level_number);
         this.draw_numbers(canvas, this.POS["shop_level"], 10);
 
         this.render_shop_skill_price(canvas);

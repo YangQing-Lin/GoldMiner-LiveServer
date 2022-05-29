@@ -146,6 +146,7 @@ export class Shop extends AcGameObject {
 
     click_skill(tx, ty) {
         let icon_pos = this.POS["shop_skill_item_click_position"];
+        let score_number = this.playground.game_map.score_number;
         for (let i = 0; i < icon_pos.length; i++) {
             // 判断玩家点击位置是否为某个技能的售卖窗口或者下一关
             if (
@@ -162,7 +163,7 @@ export class Shop extends AcGameObject {
                     console.log("player buy skill:", i);
                     this.shop_skill_is_selling[i] = false;
                     this.shop_skill_is_sold[i] = true;
-                    this.playground.game_map.score_number.player_buy_skill(i);
+                    score_number.player_buy_skill(i);
                     this.render();  // 刷新商店canvas
                 }
                 break;

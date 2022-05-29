@@ -57,10 +57,10 @@ export class GameMap extends AcGameObject {
     }
 
     start_new_level() {
-        this.time_left = 3000;
         this.playground.character = "game";
+        this.time_left = 3000;  // 设定新一局游戏的时长
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
-        this.score_number.render();
+        this.score_number.start_new_level();
         this.game_background.render();
     }
 
@@ -96,6 +96,11 @@ export class GameMap extends AcGameObject {
 
     // 更新游戏时间，控制时间结束时的逻辑
     update_time_left() {
+        // 用户切出标签页可能会让timedelta过大，造成总时间变成负数
+        // 体现出的结果就是score_number绘制数字时报错，因为这个类无法处理负数
+        if (this.timedelta / 1000 > 1 / 50) {
+            return false;
+        }
         this.time_left -= this.timedelta
 
         // 为了降低负载，只有当时间过了一秒的时候才需要刷新时间canvas
