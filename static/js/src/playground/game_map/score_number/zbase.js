@@ -62,6 +62,13 @@ export class ScoreNumber extends AcGameObject {
         this.POS["shop_money"] = [650, 30, 0.6];
         this.POS["shop_bomb"] = [365, 30, 0.6];
         this.POS["shop_level"] = [100, 30, 0.6];
+        this.POS["shop_skill_price"] = [
+            [515, 610, 0.6],
+            [870, 610, 0.6],
+            [1230, 610, 0.6],
+            [690, 983, 0.6],
+            [1045, 983, 0.6],
+        ];
     }
 
     load_image() {
@@ -115,28 +122,58 @@ export class ScoreNumber extends AcGameObject {
     // 绘制商店界面的数字
     render_shop_score_number(canvas) {
         this.get_numbers(this.shop_money_number);
-        this.draw_numbers(canvas, this.POS["shop_money"]);
+        this.draw_numbers(canvas, this.POS["shop_money"], 10);
         this.get_numbers(this.shop_bomb_number);
-        this.draw_numbers(canvas, this.POS["shop_bomb"]);
+        this.draw_numbers(canvas, this.POS["shop_bomb"], 10);
         this.get_numbers(this.shop_level_number);
-        this.draw_numbers(canvas, this.POS["shop_level"]);
+        this.draw_numbers(canvas, this.POS["shop_level"], 10);
+
+        this.render_shop_skill_price(canvas);
+    }
+
+    render_shop_skill_price(canvas) {
+        let shop = this.playground.game_map.shop;
+        let skill_is_selling = shop.shop_skill_is_selling;  // 技能是否在售
+        let skill_price = shop.shop_skill_price;  // 技能价格
+        // 绘制技能价格
+        for (let i = 0; i < 5; i++) {
+            if (skill_is_selling[i]) {
+                this.get_numbers(skill_price[i]);
+                this.draw_numbers(canvas, this.POS["shop_skill_price"][i], 0);
+            }
+        }
     }
 
     // 绘制游戏界面中的数字
     render_game_score_number(canvas) {
         this.get_numbers(this.money_number);
-        this.draw_numbers(canvas, this.POS["money"]);
+        this.draw_numbers(canvas, this.POS["money"], 10);
         this.get_numbers(this.target_number);
-        this.draw_numbers(canvas, this.POS["target"]);
+        this.draw_numbers(canvas, this.POS["target"], 10);
         this.get_numbers(this.level_number);
-        this.draw_numbers(canvas, this.POS["level"]);
+        this.draw_numbers(canvas, this.POS["level"], 10);
         this.get_numbers(this.time_left);
-        this.draw_numbers(canvas, this.POS["timer"]);
+        this.draw_numbers(canvas, this.POS["timer"], 10);
     }
 
-    draw_numbers(canvas, icon_pos) {
+    draw_skill_price_numbers(canvas, icon_pos) {
+        for (let num of this.numbers) {
+            let num_pos = this.POS["digital"][num];
+            this.ctx.drawImage(
+                this.topfont, num_pos[0], num_pos[1],
+                num_pos[2], num_pos[3],
+                canvas.scale * icon_pos[2] * (icon_pos[0] + spacing + 12),
+                canvas.scale * icon_pos[2] * (icon_pos[1] + 3),
+                canvas.scale * icon_pos[2] * num_pos[2],
+                canvas.scale * icon_pos[2] * num_pos[3]
+            );
+            spacing += num_pos[2];
+        }
+    }
+
+    // 按照传入的位置绘制数字
+    draw_numbers(canvas, icon_pos, spacing) {
         // 数字槽和图标的距离
-        let spacing = 10;
         for (let num of this.numbers) {
             let num_pos = this.POS["digital"][num];
             this.ctx.drawImage(
