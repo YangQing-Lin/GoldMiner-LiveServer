@@ -77,7 +77,7 @@ export class ScoreNumber extends AcGameObject {
         // 图片都加载好之后执行一次resize
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
-            this.resize();
+            this.render();
         }
     }
 
@@ -93,10 +93,10 @@ export class ScoreNumber extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-        this.render();
     }
 
     render() {
+        this.resize();
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,

@@ -59,7 +59,8 @@ export class GameMap extends AcGameObject {
     start_new_level() {
         this.time_left = 3000;
         this.playground.character = "game";
-        this.score_number.resize();
+        this.score_number.time_left = Math.ceil(this.time_left / 1000);
+        this.score_number.render();
     }
 
     add_listening_events() {
@@ -100,7 +101,7 @@ export class GameMap extends AcGameObject {
         if (Math.abs(this.time_left - this.last_time_left) >= 1000) {
             // 这里时间采用向上取整，这样填多少就会从多少开始，到0直接结束而不会0显示1秒
             this.score_number.time_left = Math.ceil(this.time_left / 1000);
-            this.score_number.resize();
+            this.score_number.render();
             this.last_time_left = this.time_left;
         }
 
@@ -109,7 +110,7 @@ export class GameMap extends AcGameObject {
             this.time_left = 0;
             this.playground.character = "shop";
             this.shop.start();
-            this.score_number.resize();
+            this.score_number.render();
         }
     }
 

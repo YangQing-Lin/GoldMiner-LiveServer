@@ -31,23 +31,24 @@ export class Shop extends AcGameObject {
         // 初始化售卖背景标记数组
         this.shop_skill_is_sold = [false, false, false, false, false];
 
-        this.resize();
+        if (this.playground.character === "shop") {
+            this.render();
+        }
     }
 
     update() {
         // 图片都加载好之后执行一次resize
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
-            this.resize();
+            if (this.playground.character === "shop") {
+                this.render();
+            }
         }
     }
 
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-        if (this.playground.character === "shop") {
-            this.render();
-        }
     }
 
     is_all_images_loaded() {
@@ -158,15 +159,21 @@ export class Shop extends AcGameObject {
                     this.shop_skill_is_sold[i] = true;
                 }
                 // 刷新商店canvas并退出循环
-                this.resize();
+                this.render();
                 break;
             }
         }
     }
 
     render() {
+        this.resize();
         // 先清空屏幕
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        // 如果当前不显示商店界面就清空canvas之后直接退出函数
+        // 这样每次调用this.render()就不需要判断显示的是哪个界面了
+        if (this.playground.character !== "shop") {
+            return false;
+        }
 
         let scale = this.playground.scale;
         let canvas = {
