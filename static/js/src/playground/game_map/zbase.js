@@ -2,6 +2,7 @@ import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js
 import { GameBackground } from "/static/js/src/playground/game_map/game_background/zbase.js";
 import { ScoreNumber } from "/static/js/src/playground/game_map/score_number/zbase.js";
 import { Shop } from "/static/js/src/playground/game_map/shop/zbase.js";
+import { PopUp } from "/static/js/src/playground/game_map/pop_up/zbase.js";
 
 export class GameMap extends AcGameObject {
     constructor(root, playground) {
@@ -15,18 +16,21 @@ export class GameMap extends AcGameObject {
         this.$background_canvas = $(`<canvas></canvas>`);
         this.$score_number_canvas = $(`<canvas tabindex=0></canvas>`);
         this.$shop_canvas = $(`<canvas></canvas>`);
+        this.$pop_up_canvas = $(`<canvas></canvas>`);
         // tabindex=0：给canvas绑上监听事件
         this.$canvas = $(`<canvas></canvas>`);
 
         this.game_background_ctx = this.$background_canvas[0].getContext('2d');
         this.game_score_number_ctx = this.$score_number_canvas[0].getContext('2d');
         this.game_shop_ctx = this.$shop_canvas[0].getContext('2d');
+        this.$pop_up_ctx = this.$pop_up_canvas[0].getContext('2d');
         this.ctx = this.$canvas[0].getContext('2d');
 
 
         this.game_background = new GameBackground(this.playground, this.game_background_ctx);
         this.score_number = new ScoreNumber(this.playground, this.game_score_number_ctx);
         this.shop = new Shop(this.playground, this.game_shop_ctx);
+        this.pop_up = new PopUp(this.playground, this.$pop_up_ctx);
 
         this.initScreen();
     }
@@ -41,11 +45,13 @@ export class GameMap extends AcGameObject {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
 
-        // canvas覆盖顺序由下至上：背景 -> 钩子 -> 商店 -> 数字
+        // canvas覆盖顺序由下至上：背景 -> 钩子 -> 商店 -> 弹窗 -> 数字
         this.$canvasDiv.append(this.$background_canvas);
         this.$canvasDiv.append(this.$canvas);
         this.$canvasDiv.append(this.$shop_canvas);
+        this.$canvasDiv.append(this.$pop_up_canvas);
         this.$canvasDiv.append(this.$score_number_canvas);
+
         this.playground.$playground.append(this.$canvasDiv);
     }
 

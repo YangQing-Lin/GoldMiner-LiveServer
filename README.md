@@ -12,6 +12,9 @@
 - 实现了购买商品扣钱的逻辑，并退出商店界面的测试
 - 实现了关卡数的递增
 - 实现了应用到全局的金钱和关卡变量
+- 开始绘制弹窗
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202205292327751.png)
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202205292328038.png)
 
 ### 2022-05-28
 
