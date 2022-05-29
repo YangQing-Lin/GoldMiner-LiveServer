@@ -8,6 +8,8 @@ export class GameMap extends AcGameObject {
         super();  // 调用基类的构造函数
         this.root = root;
         this.playground = playground;
+        this.last_time_left = 0;
+        this.time_left = 60000;  // 关切剩余时间  单位：ms
 
         this.$canvasDiv = $(`<div id="canvasDiv" class="canvasDiv"></div>`);
         this.$background_canvas = $(`<canvas></canvas>`);
@@ -51,6 +53,13 @@ export class GameMap extends AcGameObject {
         // 聚焦到当前canvas
         this.$score_number_canvas.focus();
         this.add_listening_events();
+        this.start_new_level();
+    }
+
+    start_new_level() {
+        this.time_left = 3000;
+        this.playground.character = "game";
+        this.score_number.resize();
     }
 
     add_listening_events() {
@@ -75,14 +84,37 @@ export class GameMap extends AcGameObject {
     }
 
     update() {
+        // 只有在游戏界面才需要更新游戏时间
+        if (this.playground.character === "game") {
+            this.update_time_left();
+        }
         this.render();
+    }
+
+    // 更新游戏时间，控制时间结束时的逻辑
+    update_time_left() {
+        this.time_left -= this.timedelta
+
+        // 为了降低负载，只有当时间过了一秒的时候才需要刷新时间canvas
+        // 并且时间为0时不会再更新了
+        if (Math.abs(this.time_left - this.last_time_left) >= 1000) {
+            // 这里时间采用向上取整，这样填多少就会从多少开始，到0直接结束而不会0显示1秒
+            this.score_number.time_left = Math.ceil(this.time_left / 1000);
+            this.score_number.resize();
+            this.last_time_left = this.time_left;
+        }
+
+        // 时间归零就会进入商店界面
+        if (this.time_left < 0) {
+            this.time_left = 0;
+            this.playground.character = "shop";
+            this.shop.start();
+            this.score_number.resize();
+        }
     }
 
     render() {
         // 清空游戏地图
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        // 渲染纯黑游戏地图背景
-        // this.ctx.fillStyle = "rgba(0, 0, 0, 1)";
-        // this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 }

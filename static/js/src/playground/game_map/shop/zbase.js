@@ -22,6 +22,16 @@ export class Shop extends AcGameObject {
                 img.is_load = true;
             }
         }
+
+        // 随机售卖技能
+        for (let i = 0; i < this.shop_skill_is_selling.length; i++) {
+            let random = Math.random();
+            this.shop_skill_is_selling[i] = random <= 0.6;  // 售卖概率60%
+        }
+        // 初始化售卖背景标记数组
+        this.shop_skill_is_sold = [false, false, false, false, false];
+
+        this.resize();
     }
 
     update() {
@@ -35,7 +45,7 @@ export class Shop extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-        if (this.playground.game_map.character === "shop") {
+        if (this.playground.character === "shop") {
             this.render();
         }
     }
@@ -48,8 +58,6 @@ export class Shop extends AcGameObject {
         }
         return true;
     }
-
-
 
     load_image() {
         // 各种背景板的图片
@@ -111,15 +119,17 @@ export class Shop extends AcGameObject {
             [292, 0, 145, 129],
             [0, 0, 160, 120],
         ];
-        // 五个售卖窗口的点击判定范围
-        // 分别是：左上x，左上y，右下x，右下y的坐标在整个屏幕上的位置
-        // 以整个canvas高度为单位1
+        // 0~4：五个售卖窗口的点击判定范围
+        // 5：next按钮的判定范围
+        // 分别是：左上x，左上y，右下x，右下y的坐标在整个屏幕上的位置（以整个canvas高度为单位1）
         this.POS["shop_skill_item_click_position"] = [
             [0.30, 0.28, 0.51, 0.49],
             [0.56, 0.28, 0.77, 0.49],
             [0.82, 0.28, 1.03, 0.49],
             [0.43, 0.55, 0.64, 0.76],
             [0.69, 0.55, 0.90, 0.76],
+
+            [1.20, 0.00, 1.33, 0.12],
         ];
 
         // 每个技能是否有售，控制技能图标的状态，实际游戏中这个函数状态是随机的
@@ -130,19 +140,24 @@ export class Shop extends AcGameObject {
     }
 
     click_skill(tx, ty) {
-        console.log("in click skill", tx, ty);
         let icon_pos = this.POS["shop_skill_item_click_position"];
-        for (let i = 0; i < 5; i++) {
-            // 判断玩家点击位置是否为某个技能的售卖窗口，且这个技能正在售卖
+        for (let i = 0; i < icon_pos.length; i++) {
+            // 判断玩家点击位置是否为某个技能的售卖窗口或者下一关
             if (
                 tx >= icon_pos[i][0] && ty >= icon_pos[i][1] &&
-                tx <= icon_pos[i][2] && ty <= icon_pos[i][3] &&
-                this.shop_skill_is_selling[i]
+                tx <= icon_pos[i][2] && ty <= icon_pos[i][3]
             ) {
-                // 玩家买了一个技能！
-                console.log("player buy a skill:", i);
-                this.shop_skill_is_selling[i] = false;
-                this.shop_skill_is_sold[i] = true;
+                if (i === 5) {
+                    // 玩家点了下一关！
+                    console.log("player click next!!!");
+                    this.playground.game_map.start_new_level();
+                } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
+                    // 玩家买了一个技能！
+                    console.log("player buy skill:", i);
+                    this.shop_skill_is_selling[i] = false;
+                    this.shop_skill_is_sold[i] = true;
+                }
+                // 刷新商店canvas并退出循环
                 this.resize();
                 break;
             }

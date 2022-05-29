@@ -12,7 +12,7 @@ export class ScoreNumber extends AcGameObject {
         this.money_number = 0;
         this.target_number = 456;
         this.level_number = 789;
-        this.timer_number = 888;
+        this.time_left = 60;
 
         this.shop_money_number = 888888888;
         this.shop_level_number = 123;
@@ -130,7 +130,7 @@ export class ScoreNumber extends AcGameObject {
         this.draw_numbers(canvas, this.POS["target"]);
         this.get_numbers(this.level_number);
         this.draw_numbers(canvas, this.POS["level"]);
-        this.get_numbers(this.timer_number);
+        this.get_numbers(this.time_left);
         this.draw_numbers(canvas, this.POS["timer"]);
     }
 
