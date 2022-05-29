@@ -58,7 +58,7 @@ export class GameMap extends AcGameObject {
 
     start_new_level() {
         this.time_left = 3000;
-        this.playground.character = "game";
+        // this.playground.character = "game";
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
         this.score_number.render();
     }

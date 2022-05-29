@@ -76,10 +76,13 @@ export class Shop extends AcGameObject {
         this.shop_item_bg.src = "/static/image/playground/shopitembg-sheet0.png";
         this.shop_skill_items = new Image();
         this.shop_skill_items.src = "/static/image/playground/shopitems-sheet0.png";
+        this.shop_skill_price_background = new Image();
+        this.shop_skill_price_background.src = "/static/image/playground/pricebg-sheet0.png";
 
         this.images = [
             this.shop_top_tile, this.shop_symbols, this.shop_patch, this.shop_bg,
             this.shop_next, this.shop_item_bg, this.shop_skill_items,
+            this.shop_skill_price_background,
         ];
     }
 
@@ -152,14 +155,14 @@ export class Shop extends AcGameObject {
                     // 玩家点了下一关！
                     console.log("player click next!!!");
                     this.playground.game_map.start_new_level();
+                    this.render();  // 刷新商店canvas
                 } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
                     // 玩家买了一个技能！
                     console.log("player buy skill:", i);
                     this.shop_skill_is_selling[i] = false;
                     this.shop_skill_is_sold[i] = true;
+                    this.render();  // 刷新商店canvas
                 }
-                // 刷新商店canvas并退出循环
-                this.render();
                 break;
             }
         }
@@ -209,33 +212,66 @@ export class Shop extends AcGameObject {
                     this.POS["shop_item_bg_x"][i],
                     this.POS["shop_item_bg_y"][i]
                 );
+
+                // 如果当前技能在售的话就绘制技能价格背景板
+                if (this.shop_skill_is_selling[i]) {
+                    this.draw_shop_skill_price_background(
+                        canvas,
+                        this.POS["shop_item_bg_sale"],
+                        this.POS["shop_item_bg_x"][i],
+                        this.POS["shop_item_bg_y"][i]
+                    );
+                }
             }
         }
 
         for (let i = 0; i < 5; i++) {
             if (this.shop_skill_is_selling[i]) {  // 绘制允许购买的技能图标
-                this.draw_shop_skill_sale_item(
-                    canvas,
-                    this.POS["shop_item_bg_sale"],
-                    this.POS["shop_item_bg_x"][i],
-                    this.POS["shop_item_bg_y"][i],
-                    this.POS["shop_skill_item_selling"][i]
-                );
+                this.draw_shop_skill_sale_item(canvas, i);
             } else {  // 绘制不允许购买（或已经购买）的技能图标
-                this.draw_shop_skill_sale_item(
-                    canvas,
-                    this.POS["shop_item_bg_sold"],
-                    this.POS["shop_item_bg_x"][i],
-                    this.POS["shop_item_bg_y"][i],
-                    this.POS["shop_skill_item_sold"][i]
-                );
+                this.draw_shop_skill_sold_item(canvas, i);
             }
         }
     }
 
-    // 绘制技能售卖处的技能图标
-    draw_shop_skill_sale_item(canvas, icon_pos, shop_item_bg_x, shop_item_bg_y, skill_icon_pose) {
+    // 绘制正在售卖的技能的价格背景板
+    draw_shop_skill_price_background(canvas, icon_pos, shop_item_bg_x, shop_item_bg_y) {
+        let img = this.shop_skill_price_background;
+        this.ctx.drawImage(
+            img, 0, 0, img.width, img.height,
+            canvas.width / 2 + canvas.scale * (icon_pos[2] * shop_item_bg_x + (icon_pos[2] - img.width) / 2),
+            canvas.height / 2 + canvas.scale * (icon_pos[3] * shop_item_bg_y + (icon_pos[3] - img.height)),
+            canvas.scale * img.width,
+            canvas.scale * img.height
+        );
+    }
+
+    // 绘制正在售卖的技能图标
+    draw_shop_skill_sale_item(canvas, i) {
         let img = this.shop_skill_items;
+        let icon_pos = this.POS["shop_item_bg_sale"];
+        let shop_item_bg_x = this.POS["shop_item_bg_x"][i];
+        let shop_item_bg_y = this.POS["shop_item_bg_y"][i];
+        let skill_icon_pose = this.POS["shop_skill_item_selling"][i];
+
+        // 因为价格背景的存在，绘制图标时要上移一部分，大概加个背景的三分之一比较合适
+        this.ctx.drawImage(
+            img, skill_icon_pose[0], skill_icon_pose[1], skill_icon_pose[2], skill_icon_pose[3],
+            canvas.width / 2 + canvas.scale * (icon_pos[2] * shop_item_bg_x + (icon_pos[2] - skill_icon_pose[2]) / 2),
+            canvas.height / 2 + canvas.scale * (icon_pos[3] * shop_item_bg_y + (icon_pos[3] - skill_icon_pose[3]) / 2 - this.shop_skill_price_background.height / 3),
+            canvas.scale * skill_icon_pose[2],
+            canvas.scale * skill_icon_pose[3]
+        );
+    }
+
+    // 绘制已经卖出的技能图标
+    draw_shop_skill_sold_item(canvas, i) {
+        let img = this.shop_skill_items;
+        let icon_pos = this.POS["shop_item_bg_sold"];
+        let shop_item_bg_x = this.POS["shop_item_bg_x"][i];
+        let shop_item_bg_y = this.POS["shop_item_bg_y"][i];
+        let skill_icon_pose = this.POS["shop_skill_item_sold"][i];
+
         this.ctx.drawImage(
             img, skill_icon_pose[0], skill_icon_pose[1], skill_icon_pose[2], skill_icon_pose[3],
             canvas.width / 2 + canvas.scale * (icon_pos[2] * shop_item_bg_x + (icon_pos[2] - skill_icon_pose[2]) / 2),
