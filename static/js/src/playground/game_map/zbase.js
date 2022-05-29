@@ -45,12 +45,12 @@ export class GameMap extends AcGameObject {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
 
-        // canvas覆盖顺序由下至上：背景 -> 钩子 -> 商店 -> 弹窗 -> 数字
+        // canvas覆盖顺序由下至上：背景 -> 钩子 -> 商店 -> 数字 -> 弹窗
         this.$canvasDiv.append(this.$background_canvas);
         this.$canvasDiv.append(this.$canvas);
         this.$canvasDiv.append(this.$shop_canvas);
-        this.$canvasDiv.append(this.$pop_up_canvas);
         this.$canvasDiv.append(this.$score_number_canvas);
+        this.$canvasDiv.append(this.$pop_up_canvas);
 
         this.playground.$playground.append(this.$canvasDiv);
     }

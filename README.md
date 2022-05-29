@@ -13,6 +13,7 @@
 - 实现了关卡数的递增
 - 实现了应用到全局的金钱和关卡变量
 - 开始绘制弹窗
+- 更改canvas显示顺序：弹窗在最上层，明天在弹窗类里面new一个数字显示类，传入弹窗的canvas即可
 ![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202205292327751.png)
 ![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202205292328038.png)
 
