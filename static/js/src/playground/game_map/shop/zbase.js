@@ -193,6 +193,9 @@ export class Shop extends AcGameObject {
         this.draw_shop_symbols_and_number_slot(canvas, this.POS["money"]);
         this.draw_shop_next(canvas);
         this.draw_shop_skill_sale_icon(canvas);
+
+        // 重绘数字
+        this.playground.game_map.score_number.render();
     }
 
     // 绘制技能售卖区的售卖状态

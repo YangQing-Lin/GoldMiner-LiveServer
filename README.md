@@ -8,6 +8,7 @@
 - 优化界面切换逻辑，将score_number的resize整合到render里面
 - 绘制商店界面技能价格背景
 - 绘制商店技能的价格
+- 优化game_background的resize逻辑，并更改game_map里的resize
 
 ### 2022-05-28
 

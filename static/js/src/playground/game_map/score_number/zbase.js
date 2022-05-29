@@ -156,21 +156,6 @@ export class ScoreNumber extends AcGameObject {
         this.draw_numbers(canvas, this.POS["timer"], 10);
     }
 
-    draw_skill_price_numbers(canvas, icon_pos) {
-        for (let num of this.numbers) {
-            let num_pos = this.POS["digital"][num];
-            this.ctx.drawImage(
-                this.topfont, num_pos[0], num_pos[1],
-                num_pos[2], num_pos[3],
-                canvas.scale * icon_pos[2] * (icon_pos[0] + spacing + 12),
-                canvas.scale * icon_pos[2] * (icon_pos[1] + 3),
-                canvas.scale * icon_pos[2] * num_pos[2],
-                canvas.scale * icon_pos[2] * num_pos[3]
-            );
-            spacing += num_pos[2];
-        }
-    }
-
     // 按照传入的位置绘制数字
     draw_numbers(canvas, icon_pos, spacing) {
         // 数字槽和图标的距离
