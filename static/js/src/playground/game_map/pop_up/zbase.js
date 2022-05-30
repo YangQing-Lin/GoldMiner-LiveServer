@@ -27,6 +27,20 @@ export class PopUp extends AcGameObject {
         }
     }
 
+    start_new_pop_up(next_window) {
+        this.next_window = next_window;
+        let shop_skill_is_sold = this.playground.game_map.shop.shop_skill_is_sold;
+        this.skill_is_sold = [false, false, false, false];
+        // 这里现实的顺序和商店的不同，数量也不一样，所以要做一个坐标变换
+        this.skill_is_sold[0] = shop_skill_is_sold[4];
+        this.skill_is_sold[1] = shop_skill_is_sold[1];
+        this.skill_is_sold[2] = shop_skill_is_sold[3];
+        this.skill_is_sold[3] = shop_skill_is_sold[2];
+        this.render();
+        console.log("in start new pop up", this.score_number.shop_money_number);
+        this.score_number.render();
+    }
+
     add_POS() {
         this.POS = new Array();
         // 未卖出的五个技能图标在图片中的坐标
@@ -85,7 +99,15 @@ export class PopUp extends AcGameObject {
             ) {
                 if (i === 0) {
                     // 玩家点击kluiyx
-                    console.log("player click start game!!!");
+                    console.log("player click start game!!!", this.next_window);
+                    if (this.next_window === "shop") {
+                        this.playground.character = "shop";
+                        this.playground.game_map.shop.start_new_shop();
+                    } else if (this.next_window === "game") {
+                        this.playground.character = "game";
+                        this.playground.game_map.start_new_level();
+                    }
+                    this.clear();
                 }
                 break;
             }
@@ -114,6 +136,10 @@ export class PopUp extends AcGameObject {
         this.ctx.canvas.height = this.playground.height;
     }
 
+    clear() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    }
+
     render() {
         this.resize();
         let canvas = {
@@ -124,7 +150,6 @@ export class PopUp extends AcGameObject {
 
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        this.playground.character = "pop up";
         if (this.playground.character === "pop up") {
             // 当有弹窗的时候需要让游戏屏幕变黑
             this.ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
@@ -183,17 +208,10 @@ export class PopUp extends AcGameObject {
     // 绘制弹窗背景板旁边的技能图标
     render_pop_up_skill_item(canvas) {
         let img = this.shop_skill_items;
-        let shop_skill_is_sold = this.playground.game_map.shop.shop_skill_is_sold;
-        let skill_is_sold = [false, false, false, false];
-        // 这里现实的顺序和商店的不同，数量也不一样，所以要做一个坐标变换
-        skill_is_sold[0] = shop_skill_is_sold[4];
-        skill_is_sold[1] = shop_skill_is_sold[1];
-        skill_is_sold[2] = shop_skill_is_sold[3];
-        skill_is_sold[3] = shop_skill_is_sold[2];
         for (let i = 0; i < 4; i++) {
             // 技能图标在素材图片中的位置信息
             let icon_img_info = this.POS["skill_item_sold"][i];
-            if (skill_is_sold[i]) {
+            if (this.skill_is_sold[i]) {
                 icon_img_info = this.POS["skill_item_selling"][i];
             }
             // 技能图标绘制的坐标（自己调出来的）

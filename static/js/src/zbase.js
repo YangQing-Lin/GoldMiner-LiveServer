@@ -16,6 +16,7 @@ export class AcGame {
     }
 
     start() {
-        this.playground.show();
+        // 想要直接进入游戏就把这行取消注释（调试游戏的时候使用，一共两个地方要改）
+        // this.playground.show();
     }
 }

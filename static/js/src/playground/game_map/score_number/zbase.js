@@ -10,12 +10,10 @@ export class ScoreNumber extends AcGameObject {
         this.time = 0;
         this.images = [];
 
-        this.shop_money_number = 0;
         this.target_number = 456;
         this.level_number = 0;
         this.time_left = 60;
 
-        this.shop_money_number = 88888;
         this.shop_bomb_number = 456;
 
         this.numbers = [];
@@ -26,6 +24,7 @@ export class ScoreNumber extends AcGameObject {
 
     start() {
         this.resize();
+        this.get_player_money_number();
 
         // 给所有的图片的加载事件绑定一个变量，用于所有图片加载好后直接执行render函数
         // 因为render可能会执行很多次（改变窗口大小），所以不能把绘制图片代码放到onload里面
@@ -119,11 +118,26 @@ export class ScoreNumber extends AcGameObject {
         let shop = this.playground.game_map.shop;
         let skill_price = shop.shop_skill_price;  // 技能价格
         this.shop_money_number -= skill_price[skill_number];
+        this.set_player_money_number();
+        console.log(this.shop_money_number, this.playground.players[0].money);
         this.render();
+    }
+
+    set_player_money_number() {
+        this.playground.players[0].money = this.shop_money_number;
+    }
+
+    get_player_money_number() {
+        if (!this.playground.players) {
+            this.shop_money_number = 0;
+        } else {
+            this.shop_money_number = this.playground.players[0].money;
+        }
     }
 
     render() {
         this.resize();
+        this.get_player_money_number();
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,

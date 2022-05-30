@@ -22,7 +22,10 @@ export class Shop extends AcGameObject {
                 img.is_load = true;
             }
         }
+    }
 
+    // 打开商店窗口
+    start_new_shop() {
         // 随机售卖技能
         for (let i = 0; i < this.shop_skill_is_selling.length; i++) {
             let random = Math.random();
@@ -33,6 +36,7 @@ export class Shop extends AcGameObject {
 
         if (this.playground.character === "shop") {
             this.render();
+            this.playground.game_map.score_number.render();
         }
     }
 
@@ -156,9 +160,9 @@ export class Shop extends AcGameObject {
                 if (i === 5) {
                     // 玩家点了下一关！
                     console.log("player click next!!!");
+                    this.playground.character = "pop up";
                     this.playground.game_map.start_new_level();
-                    this.playground.game_map.game_background.start_new_level();
-                    this.render();  // 刷新商店canvas
+                    this.clear();  // 刷新商店canvas
                 } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
                     // 玩家买了一个技能！
                     console.log("player buy skill:", i);
@@ -170,6 +174,10 @@ export class Shop extends AcGameObject {
                 break;
             }
         }
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
     render() {

@@ -8,7 +8,7 @@ export class AcGamePlayground {
         this.$playground = $(`<div class="ac-game-playground"></div>`);
         this.operator = "pc"; // pc - phone
         this.base_scale = 1140;
-        this.character = "game";  // shop, game, pop up
+        this.character = "pop up";  // shop, game, pop up
 
         this.hide();
 
@@ -82,22 +82,14 @@ export class AcGamePlayground {
 
     show(mode) {  // 打开playground界面
         this.$playground.show();
-
         this.resize();
 
-        this.width = this.$playground.width();
-        this.height = this.$playground.height();
         this.game_map = new GameMap(this.root, this);
 
         this.mode = mode;
-        this.state = "waiting";  // waiting -> fighting -> over
         this.player_count = 0;
-
-        this.resize();
-
         this.players = [];
         this.miners = [];
-
         // 绘制玩家
         this.players.push(new Player(this, this.width / 2 / this.scale, 4.3 / 16, 0.04, "me", "test", "https://cdn.acwing.com/media/user/profile/photo/84494_lg_29c89a778e.jpg"));
     }
