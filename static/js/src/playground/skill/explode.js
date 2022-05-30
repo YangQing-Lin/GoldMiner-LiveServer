@@ -75,6 +75,7 @@ export class Explode extends AcGameObject {
             this.is_start = true;
         } else {
             this.render();
+            this.playground.audio_explode.play();
         }
     }
 

@@ -25,8 +25,8 @@ export class AcGameMenu {
 
         this.start();
 
-        // 想要直接进入游戏就把这行注释掉（调试游戏的时候使用，一共两个地方要改）
-        this.show();
+        // 想要直接进入游戏就把这行注释掉（调试游戏的时候使用，一共三个地方要改）
+        // this.show();
     }
 
     start() {

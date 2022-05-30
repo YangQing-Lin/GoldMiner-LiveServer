@@ -157,6 +157,7 @@ export class Shop extends AcGameObject {
                 tx >= icon_pos[i][0] && ty >= icon_pos[i][1] &&
                 tx <= icon_pos[i][2] && ty <= icon_pos[i][3]
             ) {
+                this.playground.audio_pop.play();
                 if (i === 5) {
                     // 玩家点了下一关！
                     console.log("player click next!!!");

@@ -99,8 +99,9 @@ export class PopUp extends AcGameObject {
                 tx >= icon_pos[i][0] && ty >= icon_pos[i][1] &&
                 tx <= icon_pos[i][2] && ty <= icon_pos[i][3]
             ) {
+                this.playground.audio_pop.play();
                 if (i === 0) {
-                    // 玩家点击kluiyx
+                    // 玩家点击按钮
                     console.log("player click start game!!!", this.next_window);
                     if (this.next_window === "shop") {
                         this.playground.character = "shop";

@@ -9,6 +9,8 @@ export class AcGame {
         this.AcWingOS = AcWingOS;
 
         // 顺序不要随便换
+        // 想要直接进入游戏就把这行注释掉（调试游戏的时候使用，一共三个地方要改）
+        // this.settings = new Settings(this);
         this.menu = new AcGameMenu(this);
         this.playground = new AcGamePlayground(this);
 
@@ -16,7 +18,7 @@ export class AcGame {
     }
 
     start() {
-        // 想要直接进入游戏就把这行取消注释（调试游戏的时候使用，一共两个地方要改）
-        // this.playground.show();
+        // 想要直接进入游戏就把这行取消注释（调试游戏的时候使用，一共三个地方要改）
+        this.playground.show();
     }
 }
