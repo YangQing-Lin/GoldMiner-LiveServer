@@ -37,8 +37,10 @@ export class PopUp extends AcGameObject {
         this.skill_is_sold[2] = shop_skill_is_sold[3];
         this.skill_is_sold[3] = shop_skill_is_sold[2];
         this.render();
-        console.log("in start new pop up", this.score_number.shop_money_number);
+        // 不能把score_number.render加到this.render里面
+        // 因为score_number.render里面有pop_up.render，会死循环
         this.score_number.render();
+        console.log("in start new pop up", this.score_number.shop_money_number);
     }
 
     add_POS() {
@@ -119,6 +121,9 @@ export class PopUp extends AcGameObject {
         if (!this.is_start && this.is_all_images_loaded()) {
             this.is_start = true;
             this.render();
+            // 不能把score_number.render加到this.render里面
+            // 因为score_number.render里面有pop_up.render，会死循环
+            this.score_number.render();
         }
     }
 

@@ -117,10 +117,15 @@ export class ScoreNumber extends AcGameObject {
     player_buy_skill(skill_number) {
         let shop = this.playground.game_map.shop;
         let skill_price = shop.shop_skill_price;  // 技能价格
+        // 金钱不能是负数
+        if (this.shop_money_number < skill_price[skill_number]) {
+            return false;
+        }
         this.shop_money_number -= skill_price[skill_number];
         this.set_player_money_number();
         console.log(this.shop_money_number, this.playground.players[0].money);
         this.render();
+        return true;
     }
 
     set_player_money_number() {
@@ -158,6 +163,7 @@ export class ScoreNumber extends AcGameObject {
         }
     }
 
+    // 绘制弹窗界面的数字
     render_pop_up_score_number(canvas) {
         this.get_numbers(this.shop_money_number);
         this.draw_numbers(canvas, this.POS["pop_up_money"], 0);

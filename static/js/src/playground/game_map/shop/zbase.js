@@ -165,11 +165,15 @@ export class Shop extends AcGameObject {
                     this.clear();  // 刷新商店canvas
                 } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
                     // 玩家买了一个技能！
-                    console.log("player buy skill:", i);
-                    this.shop_skill_is_selling[i] = false;
-                    this.shop_skill_is_sold[i] = true;
-                    score_number.player_buy_skill(i);
-                    this.render();  // 刷新商店canvas
+                    let is_buy_success = score_number.player_buy_skill(i);
+                    if (is_buy_success) {
+                        console.log("player buy skill:", i);
+                        this.shop_skill_is_selling[i] = false;
+                        this.shop_skill_is_sold[i] = true;
+                        this.render();  // 刷新商店canvas
+                    } else {
+                        console.log("player buy skill false:", i);
+                    }
                 }
                 break;
             }

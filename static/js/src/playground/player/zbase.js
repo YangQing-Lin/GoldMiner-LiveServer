@@ -20,7 +20,7 @@ export class Player extends AcGameObject {
 
         this.photo_x = this.x + this.radius * 2;
         this.photo_y = this.y - this.radius * 0.5;
-        this.money = 10000;
+        this.money = 0;
 
         this.img = new Image();
         this.img.src = this.photo;
