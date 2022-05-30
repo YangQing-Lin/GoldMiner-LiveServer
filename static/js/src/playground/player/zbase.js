@@ -10,6 +10,7 @@ export class Player extends AcGameObject {
         this.ctx = this.playground.game_map.ctx;
         this.game_background = this.playground.game_map.game_background;
         this.shop = this.playground.game_map.shop;  // 载入商店界面对象
+        this.pop_up = this.playground.game_map.pop_up;  // 载入弹窗界面对象
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -43,7 +44,8 @@ export class Player extends AcGameObject {
     // 监听鼠标事件 
     add_listening_events() {
         if (this.playground.operator === "pc") {
-            this.add_pc_listening_events();
+            this.add_pc_listening_events(this.playground.game_map.$score_number_canvas);
+            this.add_pc_listening_events(this.playground.game_map.$pop_up_canvas);
         } else {
             this.add_phone_listening_events();
         }
@@ -52,7 +54,7 @@ export class Player extends AcGameObject {
     add_phone_listening_events() {
     }
 
-    add_pc_listening_events() {
+    add_pc_listening_events(focus_canvas) {
         let outer = this;
 
         // 关闭右键菜单功能
@@ -63,7 +65,7 @@ export class Player extends AcGameObject {
 
         // 监听鼠标右键点击事件，获取鼠标位置
         // 当前在最上层的canvas是哪个就要把监听事件绑定到哪个canvas上
-        this.playground.game_map.$score_number_canvas.mousedown(function (e) {
+        focus_canvas.mousedown(function (e) {
             // 项目在acapp的小窗口上运行会有坐标值的不匹配的问题，这里做一下坐标映射
             // 这里canvas前面不能加$，会报错
             const rect = outer.ctx.canvas.getBoundingClientRect();
@@ -77,13 +79,15 @@ export class Player extends AcGameObject {
                 // 各个页面点击事件计算坐标的路由
                 if (outer.playground.character === "shop") {
                     outer.shop.click_skill(tx, ty);
+                } else if (outer.playground.character === "pop up") {
+                    outer.pop_up.click_button(tx, ty);
                 }
             }
         });
 
         // 重新绑定监听对象到小窗口
         // 之前的监听对象：$(window).keydown(function (e) {
-        this.playground.game_map.$score_number_canvas.keydown(function (e) {
+        focus_canvas.keydown(function (e) {
             console.log("key code:", e.which);
 
             if (e.which === 32 || e.which === 40) {  // 空格，出勾

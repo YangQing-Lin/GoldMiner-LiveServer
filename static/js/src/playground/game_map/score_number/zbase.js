@@ -1,10 +1,11 @@
 import { AcGameObject } from "/static/js/src/playground/ac_game_objects/zbase.js";
 
 export class ScoreNumber extends AcGameObject {
-    constructor(playground, game_score_number_ctx) {
+    constructor(playground, ctx, root_name) {
         super();
         this.playground = playground;
-        this.ctx = game_score_number_ctx;
+        this.ctx = ctx;
+        this.root_name = root_name;
         this.is_start = false;
         this.time = 0;
         this.images = [];
@@ -76,6 +77,9 @@ export class ScoreNumber extends AcGameObject {
             [690, 983, 0.6],
             [1045, 983, 0.6],
         ];
+
+        this.POS["pop_up_money"] = [710, 395, 0.6];
+        this.POS["pop_up_target"] = [710, 497, 0.6];
     }
 
     load_image() {
@@ -126,13 +130,25 @@ export class ScoreNumber extends AcGameObject {
             scale: this.ctx.canvas.height / 820,
         };
 
-        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (this.playground.character === "game") {
-            this.render_game_score_number(canvas);
-        } else if (this.playground.character === "shop") {
-            this.render_shop_score_number(canvas);
+        if (this.root_name === "pop up") {
+            // 绘制数字前需要重新绘制一下背景板，不这样背景板就显示不出来，不清楚bug在哪
+            this.playground.game_map.pop_up.render();
+            this.render_pop_up_score_number(canvas);
+        } else {
+            this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (this.playground.character === "game") {
+                this.render_game_score_number(canvas);
+            } else if (this.playground.character === "shop") {
+                this.render_shop_score_number(canvas);
+            }
         }
+    }
+
+    render_pop_up_score_number(canvas) {
+        this.get_numbers(this.shop_money_number);
+        this.draw_numbers(canvas, this.POS["pop_up_money"], 0);
+        this.get_numbers(this.target_number);
+        this.draw_numbers(canvas, this.POS["pop_up_target"], 0);
     }
 
     // 绘制商店界面的数字

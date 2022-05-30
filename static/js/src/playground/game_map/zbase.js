@@ -16,7 +16,7 @@ export class GameMap extends AcGameObject {
         this.$background_canvas = $(`<canvas></canvas>`);
         this.$score_number_canvas = $(`<canvas tabindex=0></canvas>`);
         this.$shop_canvas = $(`<canvas></canvas>`);
-        this.$pop_up_canvas = $(`<canvas></canvas>`);
+        this.$pop_up_canvas = $(`<canvas tabindex=0></canvas>`);
         // tabindex=0：给canvas绑上监听事件
         this.$canvas = $(`<canvas></canvas>`);
 
@@ -28,7 +28,7 @@ export class GameMap extends AcGameObject {
 
 
         this.game_background = new GameBackground(this.playground, this.game_background_ctx);
-        this.score_number = new ScoreNumber(this.playground, this.game_score_number_ctx);
+        this.score_number = new ScoreNumber(this.playground, this.game_score_number_ctx, "game map");
         this.shop = new Shop(this.playground, this.game_shop_ctx);
         this.pop_up = new PopUp(this.playground, this.$pop_up_ctx);
 
@@ -58,7 +58,7 @@ export class GameMap extends AcGameObject {
     start() {
         // 聚焦到当前canvas
         this.$score_number_canvas.focus();
-        this.add_listening_events();
+        this.add_listening_events(this.playground.game_map.$score_number_canvas);
         this.start_new_level();
     }
 
@@ -72,11 +72,11 @@ export class GameMap extends AcGameObject {
         this.game_background.render();
     }
 
-    add_listening_events() {
+    add_listening_events(focus_canvas) {
         let outer = this;
 
         // 关闭右键菜单功能
-        this.playground.game_map.$score_number_canvas.on("contextmenu", function () {
+        focus_canvas.on("contextmenu", function () {
             return false;
         });
     }
