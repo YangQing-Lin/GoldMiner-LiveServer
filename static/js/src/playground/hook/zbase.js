@@ -30,6 +30,7 @@ export class Hook extends AcGameObject {
         this.catched_money = 0;
         this.money = 0;
         this.is_start = false;
+        this.play_machine_audio_frequency = 200;  // 播放machine音频的间隔（ms）
 
         // 提前定义好的基准值，乘以像素个数来控制图片的大小
         this.base_scale = this.playground.base_scale;
@@ -53,10 +54,14 @@ export class Hook extends AcGameObject {
         if (this.direction_flag > 2) {
             return false;
         }
-
         this.direction_tmp = this.direction_flag;
         this.direction_flag = 3;
         this.moved = this.base_moved;
+
+        // 设置播放声音的时间控制变量
+        let mp3 = this.playground.audio_machine;
+        this.time_left = 0;
+        this.last_time_left = 0;
     }
 
     update() {
@@ -99,7 +104,7 @@ export class Hook extends AcGameObject {
     // 将抓到的价格加入到player的金钱 和 score_number的金钱里面
     add_money() {
         this.player.money += this.catched_money;
-        this.score_number.shop_money_number += this.catched_money;
+        // this.score_number.shop_money_number += this.catched_money;
         this.score_number.render();
         console.log("add:", this.catched_money, "all:", this.score_number.shop_money_number);
     }
@@ -121,8 +126,27 @@ export class Hook extends AcGameObject {
     update_tile_length() {
         if (this.direction_flag === 3) {
             this.tile_length += this.moved;
+
+            // 播放声音部分（效果并不好，无法像原版那样）
+            // if (this.timedelta / 1000 > 1 / 50) {
+            //     return false;
+            // }
+            // this.time_left += this.timedelta;
+            // if (this.time_left - this.last_time_left > this.play_machine_audio_frequency) {
+            //     this.playground.audio_machine.play();
+            //     this.last_time_left = this.time_left;
+            // }
         } else if (this.direction_flag === 4) {
             this.tile_length -= this.moved;
+            // 播放声音部分（效果并不好，无法像原版那样）
+            // if (this.timedelta / 1000 > 1 / 50) {
+            //     return false;
+            // }
+            // this.time_left += this.timedelta;
+            // if (this.time_left - this.last_time_left > this.play_machine_audio_frequency) {
+            //     this.playground.audio_machine.play();
+            //     this.last_time_left = this.time_left;
+            // }
         }
 
         // 抓到金矿或者钩子达到最大长度就收回
@@ -139,6 +163,7 @@ export class Hook extends AcGameObject {
                         miner.explode_tnt();
                     } else {
                         miner.destroy();
+                        this.play_mineral_caught_audio(miner.name);
                     }
                     // 根据矿物的质量调整收钩速度
                     this.moved = this.base_moved * ((Math.abs(1000 - miner.weight)) / 1000);
@@ -156,9 +181,24 @@ export class Hook extends AcGameObject {
             // 如果抓回了东西就计算价值
             if (this.catched) {
                 this.add_money();
+                this.playground.audio_point.play();  // 播放收钱声音
                 this.caught_item = "hook";
                 this.catched = false;
             }
+        }
+    }
+
+    // 为不同的矿物配置不同的抓取声音
+    play_mineral_caught_audio(name) {
+        console.log("play audio:", name);
+        if (name === "gold_1" || name === "gold_2" || name === "gold_3") {
+            this.playground.audio_good.play();  // 播放小金块声音
+        } else if (name === "gold_4" || name === "diamond") {
+            this.playground.audio_great.play();  // 播放大金块声音
+        } else if (name === "bag") {
+            this.playground.audio_bag.play();
+        } else {
+            this.playground.audio_low.play();
         }
     }
 

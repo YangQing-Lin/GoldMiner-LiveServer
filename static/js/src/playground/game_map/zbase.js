@@ -64,12 +64,14 @@ export class GameMap extends AcGameObject {
 
     // 开始新一关的游戏界面，game_map创建的时候会调用一次，玩家在商店界面点击下一关也会调用一次
     start_new_level() {
-        this.time_left = 60000;  // 设定新一局游戏的时长
+        this.time_left = 10000;  // 设定新一局游戏的时长
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
         // 调用score_number的新一关，游戏开局的初始数据都存在score_number里面
-        this.game_background.start_new_level();
         this.pop_up.start_new_pop_up("game");
         this.score_number.start_new_level();
+        // 如果在商店购买了雷，虽然数据更新到game_background里的score_number了
+        // 但是开始游戏之后不会渲染出来，所以进游戏之前先刷新一次背景
+        this.game_background.render();
     }
 
     add_listening_events(focus_canvas) {
@@ -125,6 +127,8 @@ export class GameMap extends AcGameObject {
             this.time_left = 0;
             this.playground.character = "pop up";
             this.pop_up.start_new_pop_up("shop");
+
+            this.playground.audio_success.play();  // 播放闯关成功声音
         }
     }
 

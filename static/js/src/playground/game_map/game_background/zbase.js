@@ -29,9 +29,6 @@ export class GameBackground extends AcGameObject {
     }
 
     start_new_level() {
-        for (let miner of this.playground.miners) {
-            miner.destroy();
-        }
         // 生成矿物
         this.test_draw_minerable();
         this.render();
@@ -44,6 +41,13 @@ export class GameBackground extends AcGameObject {
 
     // 随机绘制10个矿物
     test_draw_minerable() {
+        // 先清空游戏地图上的所有矿物
+        while (this.playground.miners && this.playground.miners.length > 0) {
+            this.playground.miners[0].destroy();
+        }
+        // 输出一下表示调用了这个函数
+        console.log("###############in test draw minerable");
+
         if (!this.playground.players || this.playground.players.length === 0) {
             return false;
         }

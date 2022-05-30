@@ -121,6 +121,11 @@ export class ScoreNumber extends AcGameObject {
         if (this.shop_money_number < skill_price[skill_number]) {
             return false;
         }
+        if (skill_number === 0) {
+            console.log("player buy a bomb!");
+            this.shop_bomb_number += 1;
+            this.set_player_bomb_number();
+        }
         this.shop_money_number -= skill_price[skill_number];
         this.set_player_money_number();
         console.log(this.shop_money_number, this.playground.players[0].money);
@@ -128,10 +133,26 @@ export class ScoreNumber extends AcGameObject {
         return true;
     }
 
+    // 更新玩家持有的雷数
+    set_player_bomb_number() {
+        this.playground.players[0].bomb.number = this.shop_bomb_number;
+    }
+
+    // 获得玩家持有的雷数
+    get_player_bomb_number() {
+        if (!this.playground.players) {
+            this.shop_bomb_number = 0;
+        } else {
+            this.shop_bomb_number = this.playground.players[0].bomb.number;
+        }
+    }
+
+    // 更新玩家的金钱数
     set_player_money_number() {
         this.playground.players[0].money = this.shop_money_number;
     }
 
+    // 获得玩家的金钱数
     get_player_money_number() {
         if (!this.playground.players) {
             this.shop_money_number = 0;
@@ -143,6 +164,7 @@ export class ScoreNumber extends AcGameObject {
     render() {
         this.resize();
         this.get_player_money_number();
+        this.get_player_bomb_number();
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,

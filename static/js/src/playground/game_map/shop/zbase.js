@@ -26,6 +26,8 @@ export class Shop extends AcGameObject {
 
     // 打开商店窗口
     start_new_shop() {
+        this.playground.audio_music.play();  // 进入商店后播放音乐
+
         // 随机售卖技能
         for (let i = 0; i < this.shop_skill_is_selling.length; i++) {
             let random = Math.random();
@@ -164,6 +166,9 @@ export class Shop extends AcGameObject {
                     this.playground.character = "pop up";
                     this.playground.game_map.start_new_level();
                     this.clear();  // 刷新商店canvas
+
+                    this.playground.audio_music.pause();  // 商店音乐声暂停
+                    this.playground.audio_start.play();  // 播放游戏开始声音
                 } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
                     // 玩家买了一个技能！
                     let is_buy_success = score_number.player_buy_skill(i);

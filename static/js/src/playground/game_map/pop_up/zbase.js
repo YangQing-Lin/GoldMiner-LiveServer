@@ -106,6 +106,9 @@ export class PopUp extends AcGameObject {
                     if (this.next_window === "shop") {
                         this.playground.character = "shop";
                         this.playground.game_map.shop.start_new_shop();
+                        // 在进入商店的时候更新地图矿物，因为到游戏界面前的弹窗界面是半透明的
+                        // 如果在游戏界面开始时更新矿物就会很明显看到矿物重新生成了
+                        this.playground.game_map.game_background.start_new_level();
                     } else if (this.next_window === "game") {
                         this.playground.character = "game";
                         this.playground.game_map.start_new_level();
