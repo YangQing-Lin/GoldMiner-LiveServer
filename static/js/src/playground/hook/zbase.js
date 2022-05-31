@@ -253,12 +253,7 @@ export class Hook extends AcGameObject {
         // 5：引用的图片
         // 6：价格
         this.POS = new Array();
-        this.POS["hook"] = [
-            139, 66, 53, 36,
-            0 * rad,
-            this.hook_sheet1,
-            0
-        ];
+        this.POS["hook"] = [139, 66, 53, 36, 0 * rad, this.hook_sheet1, 0];
         this.POS["hook_gold_3"] = [0, 0, 133, 128, 2 * rad, this.hook_sheet1, 250];
         this.POS["hook_gold_1"] = [201, 113, 44, 50, 4 * rad, this.hook_sheet1, 30];
         this.POS["hook_skull"] = [145, 0, 58, 66, 4 * rad, this.hook_sheet1, 20];
