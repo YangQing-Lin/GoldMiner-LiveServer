@@ -111,7 +111,9 @@ export class PopUp extends AcGameObject {
                         this.playground.game_map.game_background.start_new_level();
                     } else if (this.next_window === "game") {
                         this.playground.character = "game";
-                        this.playground.game_map.start_new_level();
+                        // 在游戏刚开始和一局刚结束时已经执行过game_map.start_new_level了
+                        // 所以这里不需要重复执行，否则关卡数会多算
+                        // this.playground.game_map.start_new_level();
                     }
                     this.clear();
                 }
