@@ -8,6 +8,7 @@
 - 修复商店界面固定BUG
 - 修复关卡数每次会多加1的BUG
 - 修复弹窗界面调整窗口大小会导致数字消失的BUG
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202206011053923.png)
 
 ### 2022-05-30
 

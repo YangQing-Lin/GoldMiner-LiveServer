@@ -42,7 +42,7 @@ export class GameBackground extends AcGameObject {
         this.render();
     }
 
-    // 随机绘制10个矿物
+    // 随机绘制20个矿物
     test_draw_minerable() {
         // 先清空游戏地图上的所有矿物
         while (this.playground.miners && this.playground.miners.length > 0) {
@@ -64,7 +64,7 @@ export class GameBackground extends AcGameObject {
         let random_times = 0;  // 随机循环执行了多少次
         let mineral_name = "gold_1";  // 选择的矿物名称（之后会随机一个）
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             // 初始化变量
             let random_length = 0,
                 random_angle = 0,
