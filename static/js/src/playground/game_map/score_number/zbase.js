@@ -37,6 +37,7 @@ export class ScoreNumber extends AcGameObject {
 
     // 开始新的一局时会在game_map.start_new_level()函数里面触发
     start_new_level() {
+        console.log("add level number");
         this.level_number += 1;
         this.render();
     }
@@ -110,6 +111,7 @@ export class ScoreNumber extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
+        this.render();
     }
 
     // 玩家买了一个技能之后会触发的函数
@@ -162,7 +164,6 @@ export class ScoreNumber extends AcGameObject {
     }
 
     render() {
-        this.resize();
         this.get_player_money_number();
         this.get_player_bomb_number();
         let canvas = {

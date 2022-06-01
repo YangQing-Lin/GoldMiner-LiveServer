@@ -55,6 +55,7 @@ export class Shop extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
+        this.render();
     }
 
     is_all_images_loaded() {
@@ -191,7 +192,6 @@ export class Shop extends AcGameObject {
     }
 
     render() {
-        this.resize();
         // 先清空屏幕
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         // 如果当前不显示商店界面就清空canvas之后直接退出函数

@@ -37,8 +37,8 @@ export class GameMap extends AcGameObject {
 
     // 初始化所有canvas画布
     initScreen() {
-        this.$canvasDiv.css({ "width": this.playground.width });
-        this.$canvasDiv.css({ "height": this.playground.height });
+        this.$canvasDiv.css({ "width": "100%" });
+        this.$canvasDiv.css({ "height": "100%" });
         this.$canvasDiv.css({ "background-color": "lightgreed" });
         this.$canvasDiv.css({ "margin": "auto" });
 
@@ -92,8 +92,10 @@ export class GameMap extends AcGameObject {
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         // 因为下面的对象都不是一秒更新60次的，所以直接调用render函数，render里面会自动resize
-        if (this.game_background) this.game_background.render();
-        if (this.score_number) this.score_number.render();
+        if (this.game_background) this.game_background.resize();
+        if (this.score_number) this.score_number.resize();
+        if (this.pop_up) this.pop_up.resize();
+        if (this.shop) this.shop.resize();
     }
 
     update() {

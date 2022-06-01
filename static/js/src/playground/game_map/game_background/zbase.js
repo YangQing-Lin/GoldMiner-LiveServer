@@ -17,6 +17,8 @@ export class GameBackground extends AcGameObject {
     }
 
     start() {
+        this.resize();
+
         // 给所有的图片的加载事件绑定一个变量，用于所有图片加载好后直接执行render函数
         // 因为render可能会执行很多次（改变窗口大小），所以不能把绘制图片代码放到onload里面
         for (let img of this.images) {
@@ -37,6 +39,7 @@ export class GameBackground extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
+        this.render();
     }
 
     // 随机绘制10个矿物
@@ -238,8 +241,6 @@ export class GameBackground extends AcGameObject {
     }
 
     render() {
-        this.resize();
-
         // 先清空屏幕
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 

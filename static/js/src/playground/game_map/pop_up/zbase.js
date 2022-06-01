@@ -143,6 +143,7 @@ export class PopUp extends AcGameObject {
     resize() {
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
+        this.render();
     }
 
     clear() {
@@ -150,7 +151,6 @@ export class PopUp extends AcGameObject {
     }
 
     render() {
-        this.resize();
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
