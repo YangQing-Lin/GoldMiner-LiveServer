@@ -68,6 +68,7 @@
 - 绘制矿物图标、位置、碰撞体积
 - 编写随机生成矿物位置的函数
 ![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/20220526224449.png)
+![](https://picgo-yangqing.oss-cn-hangzhou.aliyuncs.com/img/202206022019131.jpg)
 
 ### 2022-05-25
 
