@@ -51,15 +51,17 @@ export class Hook extends AcGameObject {
     }
 
     tick() {
-        if (this.direction_flag > 2) {
+        console.log("in hook", this.playground.character);
+        if (this.direction_flag > 2 || this.playground.character !== "game") {
             return false;
         }
         this.direction_tmp = this.direction_flag;
         this.direction_flag = 3;
         this.moved = this.base_moved;
 
-        // 设置播放声音的时间控制变量
+        // 设置锁链播放声音的时间控制变量
         let mp3 = this.playground.audio_machine;
+        // 控制声音轮播的两个时间参数
         this.time_left = 0;
         this.last_time_left = 0;
     }
