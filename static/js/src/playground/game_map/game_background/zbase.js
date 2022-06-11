@@ -42,6 +42,27 @@ export class GameBackground extends AcGameObject {
         this.render();
     }
 
+    click_button(tx, ty) {
+        let icon_pos = this.POS["game_backgorund_button"];
+        for (let i = 0; i < icon_pos.length; i++) {
+            // 判断玩家点击位置是否为某个技能的售卖窗口或者下一关
+            if (
+                tx >= icon_pos[i][0] && ty >= icon_pos[i][1] &&
+                tx <= icon_pos[i][2] && ty <= icon_pos[i][3]
+            ) {
+                if (i === 0 && this.playground.character === "game") {
+                    // 玩家点击了下一关按钮
+                    this.click_next_level_button();
+                }
+            }
+        }
+    }
+
+    click_next_level_button() {
+        console.log("player click next level button");
+        this.playground.game_map.time_left = 0;  // 简单粗暴，但是有效
+    }
+
     // 随机绘制20个矿物
     test_draw_minerable() {
         // 先清空游戏地图上的所有矿物
@@ -165,6 +186,8 @@ export class GameBackground extends AcGameObject {
         this.gamepatch.src = "/static/image/playground/gamepatch.png";
         this.miner_roll_sheet0 = new Image();
         this.miner_roll_sheet0.src = "/static/image/playground/miner_miner_roll-sheet0.png";
+        this.next_level_button = new Image();
+        this.next_level_button.src = "/static/image/playground/pausebuttons-sheet2.png";
 
         // 单独矿物的图片
         this.gold_1 = new Image();
@@ -193,7 +216,7 @@ export class GameBackground extends AcGameObject {
         this.images = [
             this.groundtile, this.purpletile, this.bgtile1, this.bgtile2,
             this.bgtile3, this.bgtile4, this.gametopbg, this.uisymbols_sheet0,
-            this.gamepatch, this.miner_roll_sheet0,
+            this.gamepatch, this.miner_roll_sheet0, this.next_level_button,
 
             this.gold_1, this.gold_2, this.gold_3, this.gold_4, this.rock_1, this.rock_2,
             this.bone, this.skull, this.diamond, this.tnt, this.bag,
@@ -207,11 +230,17 @@ export class GameBackground extends AcGameObject {
         this.POS = new Array();
         this.POS["money"] = [0, 0, 64, 48, 100, 30, 5];
         this.POS["target"] = [65, 0, 50, 50, 100, 110, 5];
-        this.POS["level"] = [0, 49, 51, 51, 800, 30, 3];
-        this.POS["timer"] = [52, 50, 46, 55, 800, 110, 3];
+        this.POS["level"] = [0, 49, 51, 51, 840, 30, 3];
+        this.POS["timer"] = [52, 50, 46, 55, 840, 110, 3];
         this.POS["gamepatch_head"] = [0, 0, 14, 64];
         this.POS["gamepatch_item"] = [15, 0, 39, 64];
         this.POS["gamepatch_tile"] = [56, 0, 14, 64];
+
+        // 背景界面按钮位置
+        // 0：下一关
+        this.POS["game_backgorund_button"] = [
+            [1.23, 0.06, 1.32, 0.16],
+        ];
 
 
         // 这里有个很奇怪的现象，如果把下面的"this.base_scale * 920"全部换成"miner_volume_scale"的话就会大大增加随机生成矿物时重合的概率，改回来就又正常了，搞不懂是为什么，难道"this.base_scale"会在使用一次之后改变买嘛？
@@ -262,9 +291,22 @@ export class GameBackground extends AcGameObject {
         this.draw_scoreboard_background(canvas);  // 绘制金钱数量背景
         this.draw_all_minerals();
 
+        this.draw_next_level_button(canvas);  // 绘制跳关按钮
+
         // 绘制所有和玩家有关的技能图标（必须在背景图片绘制好之后绘制）
         this.render_player_skill();
 
+    }
+
+    draw_next_level_button(canvas) {
+        let img = this.next_level_button;
+        this.ctx.drawImage(
+            img, 0, 0, img.width, img.height,
+            canvas.scale * 1000,
+            canvas.scale * 48,
+            canvas.scale * img.width * 0.6,
+            canvas.scale * img.height * 0.6
+        );
     }
 
     // 绘制所有和玩家有关的技能图标（必须在背景图片绘制好之后绘制）
@@ -320,7 +362,6 @@ export class GameBackground extends AcGameObject {
                 );
             }
         }
-
     }
 
     // 按照传入的位置参数绘制图标和数字槽

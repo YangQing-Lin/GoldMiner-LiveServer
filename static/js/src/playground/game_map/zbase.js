@@ -10,7 +10,7 @@ export class GameMap extends AcGameObject {
         this.root = root;
         this.playground = playground;
         this.last_time_left = 0;
-        this.time_left = 60000;  // 关切剩余时间  单位：ms
+        this.time_left = 60000;  // 关卡剩余时间  单位：ms
 
         this.$canvasDiv = $(`<div id="canvasDiv" class="canvasDiv"></div>`);
         this.$background_canvas = $(`<canvas></canvas>`);

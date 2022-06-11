@@ -81,6 +81,8 @@ export class Player extends AcGameObject {
                     outer.shop.click_skill(tx, ty);
                 } else if (outer.playground.character === "pop up") {
                     outer.pop_up.click_button(tx, ty);
+                } else if (outer.playground.character === "game") {
+                    outer.game_background.click_button(tx, ty);
                 }
             }
         });
@@ -97,14 +99,14 @@ export class Player extends AcGameObject {
                 outer.use_bomb();
                 return false;
             } else if (e.which === 13) {  // Enter，点击下一步按钮
-                if (outer.playground.character === "shop") {
-                    // 在商店界面按Enter会进入下一关
+                if (outer.playground.character === "shop") {  // 在商店界面按Enter会进入下一关
                     outer.shop.use_item_control_player_behavior_in_shop(5);
-                } else if (outer.playground.character === "pop up") {
-                    // 在弹窗界面按Enter会开始游戏或进入商店
+                } else if (outer.playground.character === "pop up") {  // 在弹窗界面按Enter会开始游戏或进入商店
                     outer.pop_up.player_click_start_game_button();
+                } else if (outer.playground.character === "game") {  // 在游戏界面按Enter会结束当前关卡
+                    outer.game_background.click_next_level_button();
                 }
-            } else if (e.which >= 49 && e.which <= 53) { // 1~5，购买对应的道具
+            } else if (e.which >= 49 && e.which <= 53) {  // 1~5，购买对应的道具
                 outer.shop.use_item_control_player_behavior_in_shop(e.which - 49);
             }
 

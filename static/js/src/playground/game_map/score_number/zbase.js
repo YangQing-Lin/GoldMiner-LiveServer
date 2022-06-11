@@ -48,7 +48,10 @@ export class ScoreNumber extends AcGameObject {
     // 更新目标分数
     update_target_number() {
         this.target_number += this.increment_target_number;
-        this.increment_target_number += 270;
+        // 超过10关后每关目标分增长量固定，2705
+        if (this.level_number < 10) {
+            this.increment_target_number += 270;
+        }
     }
 
     add_POS() {
@@ -73,8 +76,8 @@ export class ScoreNumber extends AcGameObject {
         // 2: 数字图片的缩放比例
         this.POS["money"] = [100, 30, 1];
         this.POS["target"] = [100, 110, 1];
-        this.POS["level"] = [800, 30, 1];
-        this.POS["timer"] = [800, 110, 1];
+        this.POS["level"] = [840, 30, 1];
+        this.POS["timer"] = [840, 110, 1];
 
         this.POS["shop_money"] = [650, 30, 0.6];
         this.POS["shop_bomb"] = [365, 30, 0.6];
