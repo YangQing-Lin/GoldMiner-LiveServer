@@ -10,7 +10,9 @@ export class ScoreNumber extends AcGameObject {
         this.time = 0;
         this.images = [];
 
-        this.target_number = 456;
+        // 观察了4399游戏每局目标分数的规律，发现分数每局增加量是个等差数列，每次加270
+        this.increment_target_number = 275;
+        this.target_number = 375;
         this.level_number = 0;
         this.time_left = 60;
 
@@ -37,9 +39,16 @@ export class ScoreNumber extends AcGameObject {
 
     // 开始新的一局时会在game_map.start_new_level()函数里面触发
     start_new_level() {
-        console.log("add level number");
+        console.log("update level target number", this.root_name);
         this.level_number += 1;
+        this.update_target_number();
         this.render();
+    }
+
+    // 更新目标分数
+    update_target_number() {
+        this.target_number += this.increment_target_number;
+        this.increment_target_number += 270;
     }
 
     add_POS() {

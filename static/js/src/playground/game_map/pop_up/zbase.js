@@ -153,7 +153,7 @@ export class PopUp extends AcGameObject {
         this.ctx.canvas.height = this.playground.height;
         this.render();
         // 这样调整窗口大小后数字就不会消失了
-        if (this.score_number) this.score_number.resize();
+        if (this.score_number) this.score_number.render();
     }
 
     clear() {

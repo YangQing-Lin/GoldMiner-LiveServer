@@ -70,7 +70,9 @@ export class GameMap extends AcGameObject {
         this.pop_up.start_new_pop_up("game");
         // 刷新所有钩子状态
         this.fresh_players_hook();
+        // 更新每局的目标分数，两个score_number都要更新
         this.score_number.start_new_level();
+        this.pop_up.score_number.start_new_level();
         // 如果在商店购买了雷，虽然数据更新到game_background里的score_number了
         // 但是开始游戏之后不会渲染出来，所以进游戏之前先刷新一次背景
         this.game_background.render();
