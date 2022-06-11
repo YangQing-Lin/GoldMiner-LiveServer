@@ -68,10 +68,22 @@ export class GameMap extends AcGameObject {
         this.score_number.time_left = Math.ceil(this.time_left / 1000);
         // 调用score_number的新一关，游戏开局的初始数据都存在score_number里面
         this.pop_up.start_new_pop_up("game");
+        // 刷新所有钩子状态
+        this.fresh_players_hook();
         this.score_number.start_new_level();
         // 如果在商店购买了雷，虽然数据更新到game_background里的score_number了
         // 但是开始游戏之后不会渲染出来，所以进游戏之前先刷新一次背景
         this.game_background.render();
+    }
+
+    fresh_players_hook() {
+        if (this.playground.players) {
+            for (let player of this.playground.players) {
+                if (player.hook) {
+                    player.hook.fresh();
+                }
+            }
+        }
     }
 
     add_listening_events(focus_canvas) {
