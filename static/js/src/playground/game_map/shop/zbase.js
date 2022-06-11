@@ -153,7 +153,6 @@ export class Shop extends AcGameObject {
 
     click_skill(tx, ty) {
         let icon_pos = this.POS["shop_skill_item_click_position"];
-        let score_number = this.playground.game_map.score_number;
         for (let i = 0; i < icon_pos.length; i++) {
             // 判断玩家点击位置是否为某个技能的售卖窗口或者下一关
             if (
@@ -161,28 +160,35 @@ export class Shop extends AcGameObject {
                 tx <= icon_pos[i][2] && ty <= icon_pos[i][3]
             ) {
                 this.playground.audio_pop.play();
-                if (i === 5) {
-                    // 玩家点了下一关！
-                    console.log("player click next!!!");
-                    this.playground.character = "pop up";
-                    this.playground.game_map.start_new_level();
-                    this.clear();  // 刷新商店canvas
-
-                    this.playground.audio_music.pause();  // 商店音乐声暂停
-                    this.playground.audio_start.play();  // 播放游戏开始声音
-                } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
-                    // 玩家买了一个技能！
-                    let is_buy_success = score_number.player_buy_skill(i);
-                    if (is_buy_success) {
-                        console.log("player buy skill:", i);
-                        this.shop_skill_is_selling[i] = false;
-                        this.shop_skill_is_sold[i] = true;
-                        this.render();  // 刷新商店canvas
-                    } else {
-                        console.log("player buy skill false:", i);
-                    }
-                }
+                this.use_item_control_player_behavior_in_shop(i);
                 break;
+            }
+        }
+    }
+
+    // 使用数组下标来控制玩家在商店的行为（因为要兼顾数部和键盘事件）
+    // 0~4：玩家购买5个技能
+    // 5：下一关
+    use_item_control_player_behavior_in_shop(i) {
+        let score_number = this.playground.game_map.score_number;
+        if (i === 5) {
+            console.log("player click next!!!");
+            this.playground.character = "pop up";
+            this.playground.game_map.start_new_level();
+            this.clear();  // 刷新商店canvas
+
+            this.playground.audio_music.pause();  // 商店音乐声暂停
+            this.playground.audio_start.play();  // 播放游戏开始声音
+        } else if (this.shop_skill_is_selling[i]) {  // 购买技能需要判定技能是否在售
+            // 玩家买了一个技能！
+            let is_buy_success = score_number.player_buy_skill(i);
+            if (is_buy_success) {
+                console.log("player buy skill:", i);
+                this.shop_skill_is_selling[i] = false;
+                this.shop_skill_is_sold[i] = true;
+                this.render();  // 刷新商店canvas
+            } else {
+                console.log("player buy skill false:", i);
             }
         }
     }

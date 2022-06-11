@@ -101,25 +101,31 @@ export class PopUp extends AcGameObject {
             ) {
                 this.playground.audio_pop.play();
                 if (i === 0) {
-                    // 玩家点击按钮
-                    console.log("player click start game!!!", this.next_window);
-                    if (this.next_window === "shop") {
-                        this.playground.character = "shop";
-                        this.playground.game_map.shop.start_new_shop();
-                        // 在进入商店的时候更新地图矿物，因为到游戏界面前的弹窗界面是半透明的
-                        // 如果在游戏界面开始时更新矿物就会很明显看到矿物重新生成了
-                        this.playground.game_map.game_background.start_new_level();
-                    } else if (this.next_window === "game") {
-                        this.playground.character = "game";
-                        // 在游戏刚开始和一局刚结束时已经执行过game_map.start_new_level了
-                        // 所以这里不需要重复执行，否则关卡数会多算
-                        // this.playground.game_map.start_new_level();
-                    }
-                    this.clear();
+                    // 开始游戏
+                    this.player_click_start_game_button();
                 }
                 break;
             }
         }
+    }
+
+    // 玩家点击开始游戏的按钮（可能是进入游戏界面或者商店界面）
+    player_click_start_game_button() {
+        // 玩家点击按钮
+        console.log("player click start game!!!", this.next_window);
+        if (this.next_window === "shop") {
+            this.playground.character = "shop";
+            this.playground.game_map.shop.start_new_shop();
+            // 在进入商店的时候更新地图矿物，因为到游戏界面前的弹窗界面是半透明的
+            // 如果在游戏界面开始时更新矿物就会很明显看到矿物重新生成了
+            this.playground.game_map.game_background.start_new_level();
+        } else if (this.next_window === "game") {
+            this.playground.character = "game";
+            // 在游戏刚开始和一局刚结束时已经执行过game_map.start_new_level了
+            // 所以这里不需要重复执行，否则关卡数会多算
+            // this.playground.game_map.start_new_level();
+        }
+        this.clear();
     }
 
     update() {

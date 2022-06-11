@@ -90,13 +90,24 @@ export class Player extends AcGameObject {
         focus_canvas.keydown(function (e) {
             console.log("key code:", e.which);
 
-            if (e.which === 32 || e.which === 40) {  // 空格，出勾
+            if (e.which === 40) {  // ↓，出勾
                 outer.hook.tick();
                 return false;
             } else if (e.which === 38) {  // ↑，放炸弹
                 outer.use_bomb();
                 return false;
+            } else if (e.which === 13) {  // Enter，点击下一步按钮
+                if (outer.playground.character === "shop") {
+                    // 在商店界面按Enter会进入下一关
+                    outer.shop.use_item_control_player_behavior_in_shop(5);
+                } else if (outer.playground.character === "pop up") {
+                    // 在弹窗界面按Enter会开始游戏或进入商店
+                    outer.pop_up.player_click_start_game_button();
+                }
+            } else if (e.which >= 49 && e.which <= 53) { // 1~5，购买对应的道具
+                outer.shop.use_item_control_player_behavior_in_shop(e.which - 49);
             }
+
             return true;
         });
     }

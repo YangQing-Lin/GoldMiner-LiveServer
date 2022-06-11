@@ -172,16 +172,20 @@ export class ScoreNumber extends AcGameObject {
             scale: this.ctx.canvas.height / 820,
         };
 
+        console.log(this.root_name, this.playground.character);
         if (this.root_name === "pop up") {
-            // 绘制数字前需要重新绘制一下背景板，不这样背景板就显示不出来，不清楚bug在哪
-            this.playground.game_map.pop_up.render();
-            this.render_pop_up_score_number(canvas);
+            if (this.playground.character === "pop up") {
+                // 绘制数字前需要重新绘制一下背景板，不这样背景板就显示不出来，不清楚bug在哪
+                this.playground.game_map.pop_up.render();
+                this.render_pop_up_score_number(canvas);
+            }
         } else {
             this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (this.playground.character === "game") {
-                this.render_game_score_number(canvas);
-            } else if (this.playground.character === "shop") {
+            if (this.playground.character === "shop") {
                 this.render_shop_score_number(canvas);
+            } else {
+                // 除了商店界面之外，都要绘制游戏的数字（调整窗口大小数字就不会消失了）
+                this.render_game_score_number(canvas);
             }
         }
     }
