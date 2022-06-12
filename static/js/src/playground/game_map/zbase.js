@@ -26,13 +26,19 @@ export class GameMap extends AcGameObject {
         this.$pop_up_ctx = this.$pop_up_canvas[0].getContext('2d');
         this.ctx = this.$canvas[0].getContext('2d');
 
-
         this.game_background = new GameBackground(this.playground, this.game_background_ctx);
         this.score_number = new ScoreNumber(this.playground, this.game_score_number_ctx, "game map");
         this.shop = new Shop(this.playground, this.game_shop_ctx);
         this.pop_up = new PopUp(this.playground, this.$pop_up_ctx);
 
         this.initScreen();
+    }
+
+    start() {
+        // 聚焦到当前canvas
+        this.$score_number_canvas.focus();
+        this.add_listening_events(this.playground.game_map.$score_number_canvas);
+        this.start_new_level();
     }
 
     // 初始化所有canvas画布
@@ -53,13 +59,6 @@ export class GameMap extends AcGameObject {
         this.$canvasDiv.append(this.$pop_up_canvas);
 
         this.playground.$playground.append(this.$canvasDiv);
-    }
-
-    start() {
-        // 聚焦到当前canvas
-        this.$score_number_canvas.focus();
-        this.add_listening_events(this.playground.game_map.$score_number_canvas);
-        this.start_new_level();
     }
 
     // 开始新一关的游戏界面，game_map创建的时候会调用一次，玩家在商店界面点击下一关也会调用一次
@@ -141,10 +140,18 @@ export class GameMap extends AcGameObject {
         // 时间归零就会进入商店界面
         if (this.time_left < 0) {
             this.time_left = 0;
-            this.playground.character = "pop up";
-            this.pop_up.start_new_pop_up("shop");
 
-            this.playground.audio_success.play();  // 播放闯关成功声音
+            this.playground.character = "pop up";
+            // TODO 判断是否通关
+            if (this.playground.players[0].money >= this.score_number.target_number) {
+                this.pop_up.start_new_pop_up("success");
+
+                this.playground.audio_success.play();  // 播放闯关成功声音
+            } else {
+                this.pop_up.start_new_pop_up("fail");
+
+                this.playground.audio_fail.play();  // 播放闯关失败声音
+            }
         }
     }
 

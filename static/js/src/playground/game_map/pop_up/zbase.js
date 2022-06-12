@@ -29,18 +29,24 @@ export class PopUp extends AcGameObject {
 
     start_new_pop_up(next_window) {
         this.next_window = next_window;
-        let shop_skill_is_sold = this.playground.game_map.shop.shop_skill_is_sold;
-        this.skill_is_sold = [false, false, false, false];
-        // 这里现实的顺序和商店的不同，数量也不一样，所以要做一个坐标变换
-        this.skill_is_sold[0] = shop_skill_is_sold[4];
-        this.skill_is_sold[1] = shop_skill_is_sold[1];
-        this.skill_is_sold[2] = shop_skill_is_sold[3];
-        this.skill_is_sold[3] = shop_skill_is_sold[2];
+        if (this.next_window === "success") {
+            console.log("in start success pop up!");
+        } else if (this.next_window === "fail") {
+            console.log("in start fail pop up!");
+        } else {
+            let shop_skill_is_sold = this.playground.game_map.shop.shop_skill_is_sold;
+            this.skill_is_sold = [false, false, false, false];
+            // 这里现实的顺序和商店的不同，数量也不一样，所以要做一个坐标变换
+            this.skill_is_sold[0] = shop_skill_is_sold[4];
+            this.skill_is_sold[1] = shop_skill_is_sold[1];
+            this.skill_is_sold[2] = shop_skill_is_sold[3];
+            this.skill_is_sold[3] = shop_skill_is_sold[2];
+            console.log("in start new pop up", this.score_number.shop_money_number);
+        }
         this.render();
         // 不能把score_number.render加到this.render里面
         // 因为score_number.render里面有pop_up.render，会死循环
         this.score_number.render();
-        console.log("in start new pop up", this.score_number.shop_money_number);
     }
 
     add_POS() {
@@ -84,9 +90,14 @@ export class PopUp extends AcGameObject {
         this.button_icon = new Image();
         this.button_icon.src = "/static/image/playground/popupbuttons-sheet1.png";
 
+        this.pop_up_success_img = new Image();
+        this.pop_up_success_img.src = "/static/image/playground/resultphoto-sheet0.png";
+        this.pop_up_fail_img = new Image();
+        this.pop_up_fail_img.src = "/static/image/playground/resultphoto-sheet1.png";
+
         this.images = [
             this.pop_up_background, this.shop_skill_items, this.button_background,
-            this.button_icon,
+            this.button_icon, this.pop_up_fail_img,
         ];
     }
 
@@ -109,11 +120,11 @@ export class PopUp extends AcGameObject {
         }
     }
 
-    // 玩家点击开始游戏的按钮（可能是进入游戏界面或者商店界面）
+    // 玩家点击开始游戏的按钮（可能是进入游戏界面 或 商店界面 或 结束游戏）
     player_click_start_game_button() {
         // 玩家点击按钮
         console.log("player click start game!!!", this.next_window);
-        if (this.next_window === "shop") {
+        if (this.next_window === "success") {
             this.playground.character = "shop";
             this.playground.game_map.shop.start_new_shop();
             // 在进入商店的时候更新地图矿物，因为到游戏界面前的弹窗界面是半透明的
@@ -124,6 +135,8 @@ export class PopUp extends AcGameObject {
             // 在游戏刚开始和一局刚结束时已经执行过game_map.start_new_level了
             // 所以这里不需要重复执行，否则关卡数会多算
             // this.playground.game_map.start_new_level();
+        } else if (this.next_window === "fail") {
+            console.log("game fail!");
         }
         this.clear();
     }
@@ -161,6 +174,10 @@ export class PopUp extends AcGameObject {
     }
 
     render() {
+        if (this.playground.character !== "pop up") {
+            return false;
+        }
+
         let canvas = {
             width: this.ctx.canvas.width,
             height: this.ctx.canvas.height,
@@ -168,14 +185,11 @@ export class PopUp extends AcGameObject {
         };
 
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 当有弹窗的时候需要让游戏屏幕变黑
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        if (this.playground.character === "pop up") {
-            // 当有弹窗的时候需要让游戏屏幕变黑
-            this.ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-            this.render_pop_up(canvas);
-        }
+        this.render_pop_up(canvas);
     }
 
     // 绘制弹窗背景板子
@@ -193,13 +207,41 @@ export class PopUp extends AcGameObject {
             canvas.scale * img.width,
             canvas.scale * img.height
         );
+        if (this.next_window === "success") {
+            this.render_pop_up_success_img(canvas);
+        } else if (this.next_window === "fail") {
+            this.render_pop_up_fail_img(canvas);
+        } else {
+            // 绘制技能图标，并回归canvas坐标位置
+            // 以背景板所上角为(0, 0)点是为了更简单地计算坐标
+            this.render_pop_up_skill_item(canvas);
+        }
 
-        // 绘制技能图标，并回归canvas坐标位置
-        // 以背景板所上角为(0, 0)点是为了更简单地计算坐标
-        this.render_pop_up_skill_item(canvas);
         // 绘制开始游戏的按钮
         this.render_pop_up_button(canvas);
         this.ctx.restore();
+    }
+
+    render_pop_up_success_img(canvas) {
+        let img = this.pop_up_success_img;
+        this.ctx.drawImage(
+            img, 0, 0, img.width, img.height,
+            canvas.scale * 370,
+            canvas.scale * 95,
+            canvas.scale * img.width,
+            canvas.scale * img.height
+        );
+    }
+
+    render_pop_up_fail_img(canvas) {
+        let img = this.pop_up_fail_img;
+        this.ctx.drawImage(
+            img, 0, 0, img.width, img.height,
+            canvas.scale * 370,
+            canvas.scale * 95,
+            canvas.scale * img.width,
+            canvas.scale * img.height
+        );
     }
 
     render_pop_up_button(canvas) {
