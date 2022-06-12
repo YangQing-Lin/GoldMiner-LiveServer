@@ -97,9 +97,11 @@ export class ScoreNumber extends AcGameObject {
     load_image() {
         this.topfont = new Image();
         this.topfont.src = "/static/image/playground/topfont.png";
+        this.gamefontgreen = new Image();
+        this.gamefontgreen.src = "/static/image/playground/gamefontgreen.png";
 
         this.images = [
-            this.topfont,
+            this.topfont, this.gamefontgreen,
         ];
     }
 
@@ -249,11 +251,16 @@ export class ScoreNumber extends AcGameObject {
 
     // 按照传入的位置绘制数字
     draw_numbers(canvas, icon_pos, spacing) {
+        let img = this.topfont;
+        // 得分达标时要把分数绘制成绿色
+        if (icon_pos === this.POS["money"] && this.shop_money_number >= this.target_number) {
+            img = this.gamefontgreen;
+        }
         // 数字槽和图标的距离
         for (let num of this.numbers) {
             let num_pos = this.POS["digital"][num];
             this.ctx.drawImage(
-                this.topfont, num_pos[0], num_pos[1],
+                img, num_pos[0], num_pos[1],
                 num_pos[2], num_pos[3],
                 canvas.scale * icon_pos[2] * (icon_pos[0] + spacing + 12),
                 canvas.scale * icon_pos[2] * (icon_pos[1] + 3),
