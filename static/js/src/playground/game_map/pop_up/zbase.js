@@ -87,8 +87,10 @@ export class PopUp extends AcGameObject {
         this.shop_skill_items.src = "/static/image/playground/shopitems-sheet0.png";
         this.button_background = new Image();
         this.button_background.src = "/static/image/playground/button-sheet0.png";
-        this.button_icon = new Image();
-        this.button_icon.src = "/static/image/playground/popupbuttons-sheet1.png";
+        this.home_button_icon = new Image();
+        this.home_button_icon.src = "/static/image/playground/popupbuttons-sheet0.png";
+        this.next_button_icon = new Image();
+        this.next_button_icon.src = "/static/image/playground/popupbuttons-sheet1.png";
 
         this.pop_up_success_img = new Image();
         this.pop_up_success_img.src = "/static/image/playground/resultphoto-sheet0.png";
@@ -97,7 +99,7 @@ export class PopUp extends AcGameObject {
 
         this.images = [
             this.pop_up_background, this.shop_skill_items, this.button_background,
-            this.button_icon, this.pop_up_fail_img,
+            this.next_button_icon, this.pop_up_fail_img, this.home_button_icon,
         ];
     }
 
@@ -130,15 +132,19 @@ export class PopUp extends AcGameObject {
             // 在进入商店的时候更新地图矿物，因为到游戏界面前的弹窗界面是半透明的
             // 如果在游戏界面开始时更新矿物就会很明显看到矿物重新生成了
             this.playground.game_map.game_background.start_new_level();
+            this.clear();
         } else if (this.next_window === "game") {
             this.playground.character = "game";
             // 在游戏刚开始和一局刚结束时已经执行过game_map.start_new_level了
             // 所以这里不需要重复执行，否则关卡数会多算
             // this.playground.game_map.start_new_level();
+            this.clear();
         } else if (this.next_window === "fail") {
             console.log("game fail!");
+            this.playground.game_map.game_background.start_new_level();
+            // TODO WEB端需要将下面的重启函数换成退出游戏界面
+            this.playground.game_map.restart();
         }
-        this.clear();
     }
 
     update() {
@@ -208,9 +214,9 @@ export class PopUp extends AcGameObject {
             canvas.scale * img.height
         );
         if (this.next_window === "success") {
-            this.render_pop_up_success_img(canvas);
+            this.render_pop_up_img(canvas, this.pop_up_success_img);
         } else if (this.next_window === "fail") {
-            this.render_pop_up_fail_img(canvas);
+            this.render_pop_up_img(canvas, this.pop_up_fail_img);
         } else {
             // 绘制技能图标，并回归canvas坐标位置
             // 以背景板所上角为(0, 0)点是为了更简单地计算坐标
@@ -222,19 +228,8 @@ export class PopUp extends AcGameObject {
         this.ctx.restore();
     }
 
-    render_pop_up_success_img(canvas) {
-        let img = this.pop_up_success_img;
-        this.ctx.drawImage(
-            img, 0, 0, img.width, img.height,
-            canvas.scale * 370,
-            canvas.scale * 95,
-            canvas.scale * img.width,
-            canvas.scale * img.height
-        );
-    }
-
-    render_pop_up_fail_img(canvas) {
-        let img = this.pop_up_fail_img;
+    // 绘制闯关成功或失败后对应的图片
+    render_pop_up_img(canvas, img) {
         this.ctx.drawImage(
             img, 0, 0, img.width, img.height,
             canvas.scale * 370,
@@ -246,7 +241,6 @@ export class PopUp extends AcGameObject {
 
     render_pop_up_button(canvas) {
         let img = this.button_background;
-        let img_icon = this.button_icon;
         let bg_img = this.pop_up_background;
         this.ctx.drawImage(
             img, 0, 0, img.width, img.height,
@@ -256,6 +250,11 @@ export class PopUp extends AcGameObject {
             canvas.scale * img.height
         );
 
+        let img_icon = this.next_button_icon;
+        // 闯关失败就绘制回到主页的图标
+        if (this.next_window === "fail") {
+            img_icon = this.home_button_icon;
+        }
         // 绘制按钮上面的方向键
         this.ctx.drawImage(
             img_icon, 0, 0, img_icon.width, img_icon.height,

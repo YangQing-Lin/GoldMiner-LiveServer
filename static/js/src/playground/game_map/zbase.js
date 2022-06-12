@@ -41,6 +41,14 @@ export class GameMap extends AcGameObject {
         this.start_new_level();
     }
 
+    restart() {
+        this.playground.character = "pop up";
+        this.playground.players[0].money = 0;
+        this.score_number.restart();
+        this.pop_up.score_number.restart();
+        this.start_new_level();
+    }
+
     // 初始化所有canvas画布
     initScreen() {
         this.$canvasDiv.css({ "width": "100%" });
@@ -74,7 +82,7 @@ export class GameMap extends AcGameObject {
         this.pop_up.score_number.start_new_level();
         // 如果在商店购买了雷，虽然数据更新到game_background里的score_number了
         // 但是开始游戏之后不会渲染出来，所以进游戏之前先刷新一次背景
-        this.game_background.render();
+        // this.game_background.render();
     }
 
     fresh_players_hook() {

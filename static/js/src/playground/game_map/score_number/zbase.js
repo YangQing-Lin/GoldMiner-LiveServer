@@ -14,9 +14,9 @@ export class ScoreNumber extends AcGameObject {
         this.increment_target_number = 275;
         this.target_number = 375;
         this.level_number = 0;
-        this.time_left = 60;
 
-        this.shop_bomb_number = 456;
+        this.time_left = 60;
+        this.shop_bomb_number = 0;
 
         this.numbers = [];
 
@@ -35,6 +35,15 @@ export class ScoreNumber extends AcGameObject {
                 img.is_load = true;
             }
         }
+    }
+
+    // 游戏失败后重置游戏时调用的函数
+    restart() {
+        console.log("########in score number restart:", this.root_name);
+        this.increment_target_number = 275;
+        this.target_number = 375;
+        this.level_number = 0;
+        // this.time_left = 60;
     }
 
     // 开始新的一局时会在game_map.start_new_level()函数里面触发
